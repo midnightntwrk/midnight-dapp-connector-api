@@ -1,0 +1,18 @@
+{
+  "out": "docs/api",
+  "readme": "README.md",
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./src/index.ts"
+  ],
+  "includeVersion": true,
+  "disableSources": true,
+  "hideGenerator": true,
+  "categoryOrder": ["Class", "Interface", "Enum", "Function", "Variable", "*"],
+  "categorizeByGroup": true,
+  "hideBreadcrumbs": false,
+  "hidePageTitle": false,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true
+}

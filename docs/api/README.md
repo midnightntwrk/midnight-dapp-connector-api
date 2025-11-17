@@ -1,9 +1,12 @@
+**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**
+
+***
+
 # Midnight DApp connector API
 
 This API provides a comprehensive interface for the DApp - Wallet connection, defining the structure of the data and operations available.
 
-The [Specification](./SPECIFICATION.md) document describes in more detail expected implementation and usage.
-
+The [Specification](_media/SPECIFICATION.md) document describes in more detail expected implementation and usage.
 
 ## Installation
 
@@ -22,7 +25,6 @@ The DApp connector API should be exposed through the global variable as follows:
 In this way multiple wallets can inject their API without causing conflicts, and a DApp can select/ask the user 
 to which wallet connection should be established.
 
-
 ## Initial API data and methods
 
 | Name | Description |
@@ -31,7 +33,6 @@ to which wallet connection should be established.
 | **icon** | Wallet icon, as an URL, either reference to a hosted resource, or a base64 encoded data URL |
 | **apiVersion** | Version of the API implemented by this instance of the API. E.g. wallet implementing version 3.1.5 provides apiVersion with value '3.1.5'. This value lets DApps to differentiate between different versions of the API and implement appropriate logic for each version or not use some versions at all |
 | **connect** | Connect to wallet, hinting desired network id. Upon successful connection returns a promise with [ConnectedAPI](type-aliases/ConnectedAPI.md) |
-
 
 ## API usage
 
@@ -50,7 +51,6 @@ try {
   console.log('an error occurred', error);
 }
 ```
-
 
 ### Getting information about the wallet before connection
 
@@ -191,7 +191,6 @@ try {
 }
 ```
 
-
 ## Examples
 In this section, you'll find examples demonstrating how to fully utilize the DApp connector API.
 
@@ -202,7 +201,6 @@ import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
 declare function semverMatch(version, expectedRange);
 declare function askUserToSelect(wallets: InitialAPI[]): Promise<InitialAPI>;
-
 
 async function connect(): Promise<ConnectedAPI> {
   const networkId = NetworkId.MainNet;
@@ -259,7 +257,6 @@ const tx = await connectedWallet.makeIntent([{
 }]);
 // Here, the `tx` can be submitted to some service, so that it becomes available to the other party
 
-
 // Party #2
 const tx = await fetchTransactionToMatch();
 const connectedWallet = await connect();
@@ -267,51 +264,3 @@ const connectedWallet = await connect();
 const balancedTx = await connectedWallet.balanceSealedTransaction(tx);
 await connectedWallet.submitTransaction(balancedTx);
 ```
-
-### LICENSE
-
-Apache 2.0.
-
-### README.md
-
-Provides a brief description for users and developers who want to understand the purpose, setup, and usage of the repository.
-
-### SECURITY.md
-
-Provides a brief description of the Midnight Foundation's security policy and how to properly disclose security issues.
-
-### CONTRIBUTING.md
-
-Provides guidelines for how people can contribute to the Midnight project.
-
-### CODEOWNERS
-
-Defines repository ownership rules.
-
-### ISSUE_TEMPLATE
-
-Provides templates for reporting various types of issues, such as: bug report, documentation improvement and feature request.
-
-### PULL_REQUEST_TEMPLATE
-
-Provides a template for a pull request.
-
-### CLA Assistant
-
-The Midnight Foundation appreciates contributions, and like many other open source projects asks contributors to sign a contributor
-License Agreement before accepting contributions. We use CLA assistant (https://github.com/cla-assistant/cla-assistant) to streamline the CLA
-signing process, enabling contributors to sign our CLAs directly within a GitHub pull request.
-
-### Dependabot
-
-The Midnight Foundation uses GitHub Dependabot feature to keep our projects dependencies up-to-date and address potential security vulnerabilities.
-
-### Checkmarx
-
-The Midnight Foundation uses Checkmarx for application security (AppSec) to identify and fix security vulnerabilities.
-All repositories are scanned with Checkmarx's suite of tools including: Static Application Security Testing (SAST), Infrastructure as Code (IaC), Software Composition Analysis (SCA), API Security, Container Security and Supply Chain Scans (SCS).
-
-### Unito
-
-Facilitates two-way data synchronization, automated workflows and streamline processes between: Jira, GitHub issues and Github project Kanban board.
-
