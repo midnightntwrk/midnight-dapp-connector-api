@@ -1,0 +1,58 @@
+name: Publish documentation
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  #v5.0.0
+      - name: Setup Node Environment
+        uses: ./.github/workflows/setup-env
+        with:
+          npmAuthToken: $NODE_AUTH_TOKEN
+
+      - name: Generate documentation
+        run: yarn build:docs
+
+      - name: Check if there are changes in docs and create a new branch
+        id: set_update
+        run: |
+          if [ -n "$(git status ./docs --porcelain)" ]; then
+            echo "Adding new..."
+            git config --global user.email "midnight-ci@users.noreply.github.com"
+            git config --global user.name "Midnight CI GitHub Action"
+            BRANCH=api-docs/merge-prs/`date +'%Y-%m-%dT%H%M%S'`
+            git checkout -b $BRANCH
+            git push -u origin $BRANCH
+            echo "UPDATE=true" >> $GITHUB_OUTPUT
+            echo "NEW_BRANCH=$BRANCH" >> $GITHUB_OUTPUT
+          else
+            echo "Nothing to update"
+            echo "UPDATE=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: MonikaJassova/ghcommit-action@aee0efc02d3707e178c534477e5c87f70fe6678f
+        if: steps.set_update.outputs.UPDATE == 'true'
+        with:
+          commit_message: "DApp Connector API documentation update - created by Midnight CI Github Action"
+          repo: ${{ github.repository }}
+          branch: ${{ steps.set_update.outputs.NEW_BRANCH }}
+          file_pattern: 'docs'
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Open a PR
+        if: steps.set_update.outputs.UPDATE == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr create --base main --head ${{ steps.set_update.outputs.NEW_BRANCH }} --title "API documentation update" --body "Update API documentation - created by Midnight CI Github Action"
