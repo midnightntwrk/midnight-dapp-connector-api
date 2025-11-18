@@ -9,6 +9,8 @@ on:
       - main
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   docs:
     runs-on: ubuntu-latest
