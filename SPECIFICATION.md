@@ -53,7 +53,7 @@ declare global {
 
 Here, some responsibilities lie on both DApp and Wallet:
 1. The DApp should not rely on the contents of the key in the `midnight` object, as it can be arbitrary string and defined arbitrarily by the implementor. The wallet can use their name as the identifier, but a randomized string, like UUID is equally valid option.
-2. In case multiple wallets install their API - the DApp should present the user with way to choose the wallet to use for the interaction
+2. In case multiple wallets compatible API instances are installed - the DApp must present the user with way to choose the wallet to use for the interaction
 3. From DApp perspective, both name and icon are potentially malicious input, and thus - they should be sanitized before being presented to the user. In particular - the icon should always be rendered inside an `img` tag to prevent XSS from JavaScript embedded in SVG.
 4. DApp should always check the `apiVersion` against supported range of versions (following semver semantics) and the DApp must not attempt to connect or present to the user initial APIs that are annotated with an unsupported API version.
 5. Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
@@ -70,6 +70,8 @@ Here, some responsibilities lie on both DApp and Wallet:
 Once connected, wallet provides connected API - one which allow for specific interaction with the wallet.
 
 Main intention behind the connected API design is to enable many useful DApps, but also - to maintain separation of responsibilities between DApps and wallets. Wallets should not be concerned about preparing the right contract calls and preparing whole transaction as the DApp needs it, but also DApps should not be concerned with key management or wallet-specific operations like coin selection. For that reason, no API provides direct access to shielded coins or unshielded UTxOs, and instead DApps can ask wallet to prepare a transaction having specific effect using methods like `makeTransfer` or `makeIntent`. At the same time, main API allowing DApps to use tokens in contracts and have wallet pay fees is `balanceTransaction` - there, the DApp is expected to provide a transaction containing with desired effects (like contract calls, or some token outputs), and the wallet must ensure that fees are paid, as well as necessary inputs and outputs are provided to fully balance each token movement, so that DApp can focus solely on its desired effects.
+
+Importantly, the Connected API also allows delegating proof generation to the wallet. It is to offer bigger flexibility and conformance to user's choices as some of proving modalities might require some additional configuration or preparational steps, which eventually might be too demanding for every DApp to support.
 
 The connected API consists of couple of parts, each always present, but its methods may throw an error indicating lack of permission:
 ```ts
@@ -151,7 +153,7 @@ type Configuration = {
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
   /**  Prover Server URI */
-  proverServerUri: string;
+  proverServerUri?: string | undefined;
   /**  Substrate URI */
   substrateNodeUri: string;
 
@@ -165,6 +167,10 @@ type AccessConfiguration = {
    * Status of an existing connection to wallet
    */
   getConnectionStatus(): Promise<ConnectionStatus>;
+}
+
+type DelegateProving = {
+  getProvingProvider(keyMaterialProvider: KeyMaterialProvider): Promise<ProvingProvider>;
 }
 
 type SubmitTransaction = {
@@ -181,6 +187,7 @@ type WalletConnectedAPI =
   & DustAddress
   & InitActions 
   & AccessConfiguration 
+  & DelegateProving
   & SubmitTransactions
 
 type ExecutionStatus = Record<number, "Success" | "Failure">;
@@ -275,6 +282,24 @@ type ConnectionStatus =
       status: "disconnected";
     };
 
+export type KeyMaterialProvider = {
+  getZKIR(circuitKeyLocation: string): Promise<Uint8Array>;
+  getProverKey(circuitKeyLocation: string): Promise<Uint8Array>;
+  getVerifierKey(circuitKeyLocation: string): Promise<Uint8Array>;
+}
+
+export type ProvingProvider = {
+  check(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+  ): Promise<(bigint | undefined)[]>;
+  prove(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+    overwriteBindingInput?: bigint,
+  ): Promise<Uint8Array>;
+};
+
 type HintUsage = {
   hintUsage(methodNames: Array<keyof ConnectedAPI>): Promise<void>;
 }
@@ -291,7 +316,7 @@ type ConnectedAPI = WalletConnectedAPI & HintUsage;
 
 #### Initialization and configuration
 
-1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary.
+1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary. The proof server URL is optional and likely won't be present, as being replaced with a more flexible `getProvingProvider` API.
 2. The DApp can double check if `networkId` present in configuration matches the requested one
 3. In the configuration object, the wallet must point to service deployments, which are compatible with network id present, and preferably are the same that the wallet itself uses for particular network.
 
@@ -322,6 +347,19 @@ There exist 5 methods related to transactions: `makeTransfer`, `makeIntent`, `ba
 #### Signing
 
 In order to make it impossible to sign transactions by accident, wallet receiving call to `signData` must prefix data with string `midnight_signed_message:<data_size>:`, where `<data_size>` is data size in bytes.
+
+#### Proving
+
+The `getProvingProvider` method takes an object being able to resolve on-demand circuit representations needed for proving and verifying - its ZKIR (intermediate representation), prover key (low level representation needed for proving) and verifier key (low level representation needed for verification). It returns a `ProvingProvider` interface compatible with the one defined in Midnight's Ledger WASM bindings. The `KeyMaterialProvider` is almost the same as `ZKConfigProvider` defined in Midnight.js. Such pairing of interfaces enables:
+- the proving implementation to cache prover keys, which may be quite big (often 10MB-20MB, sometimes event 80MB and more) and use the verifer keys or ZKIR for the resolution (which are significantly smaller)
+- easy usage from Midnight.js
+
+> [!NOTE]
+> In the case of particularly complex circuits, the size of the prover key might reach 80MB and more (while the average does not seem to exceed 20MB). Sizes like this come close to, or even exceed message size limits of different transport methods. The wallet must take that into account when implementing the proving provider.
+
+Here, it is crucial for the DApp and the wallet to acknowledge:
+- the proof preimages submitted for proving contain the exact private data which the proof itself hides, so the wallet can learn them
+- the wallet de-facto owns the user experience around proving, which may be a very time-consuming operation (up to several minutes in the most pessimistic scenarios), and the details of the behavior will depend on the proving modality provided by the wallet
 
 ### Errors
 
