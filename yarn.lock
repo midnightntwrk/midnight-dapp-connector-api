@@ -179,7 +179,6 @@ __metadata:
   resolution: "@midnight-ntwrk/dapp-connector-api@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.18.0"
-    "@midnight-ntwrk/midnight-js-network-id": "npm:2.1.0"
     "@rollup/plugin-commonjs": "npm:^29.0.0"
     "@rollup/plugin-node-resolve": "npm:^16.0.0"
     "@rollup/plugin-typescript": "npm:^12.1.2"
@@ -189,19 +188,13 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.2.1"
     prettier: "npm:^3.4.2"
     rollup: "npm:^4.30.1"
+    tslib: "npm:^2.8.1"
     typedoc: "npm:^0.28.0"
     typedoc-plugin-markdown: "npm:^4.4.1"
     typescript: "npm:^5.7.3"
     typescript-eslint: "npm:^8.20.0"
   languageName: unknown
   linkType: soft
-
-"@midnight-ntwrk/midnight-js-network-id@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@midnight-ntwrk/midnight-js-network-id@npm:2.1.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40midnight-ntwrk%2Fmidnight-js-network-id%2F2.1.0%2F12b242c95442d5ba41e69b6f86c96fbf916263c7"
-  checksum: 10/507de34057ef1b65c6b929ba70e14853d35962d4ffa1ad573c2774e29a84bc37a5230ef118f6e7fa5038ace06bf2e78ca46f741bae9bf9099bd706f8dcf20a7d
-  languageName: node
-  linkType: hard
 
 "@npmcli/agent@npm:^3.0.0":
   version: 3.0.0
@@ -2305,6 +2298,13 @@ __metadata:
   peerDependencies:
     typescript: ">=4.8.4"
   checksum: 10/02e55b49d9617c6eebf8aadfa08d3ca03ca0cd2f0586ad34117fdfc7aa3cd25d95051843fde9df86665ad907f99baed179e7a117b11021417f379e4d2614eacd
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
   languageName: node
   linkType: hard
 

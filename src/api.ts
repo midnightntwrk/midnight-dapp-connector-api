@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { type NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
 /**
  * Initial API for a wallet providing a DApp Connector API - it contains the information and methods allowing DApp to
@@ -40,7 +39,7 @@ export type InitialAPI = {
   /**
    * Connect to wallet, hinting desired network id
    */
-  connect: (networkId: string | NetworkId) => Promise<ConnectedAPI>;
+  connect: (networkId: string) => Promise<ConnectedAPI>;
 };
 
 /**
@@ -187,7 +186,7 @@ export type Configuration = {
   substrateNodeUri: string;
 
   /** Network id connected to - present here mostly for completness and to allow dapp validate it is connected to the network it wishes to */
-  networkId: string | NetworkId;
+  networkId: string;
 };
 
 /**
@@ -300,7 +299,7 @@ export type ConnectionStatus =
        * Connection is established to following network id
        */
       status: 'connected';
-      networkId: string | NetworkId;
+      networkId: string;
     }
   | {
       /**
