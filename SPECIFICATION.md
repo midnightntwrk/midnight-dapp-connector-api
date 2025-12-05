@@ -153,7 +153,7 @@ type Configuration = {
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
   /**  Prover Server URI */
-  proverServerUri: string;
+  proverServerUri?: string | undefined;
   /**  Substrate URI */
   substrateNodeUri: string;
 
@@ -316,7 +316,7 @@ type ConnectedAPI = WalletConnectedAPI & HintUsage;
 
 #### Initialization and configuration
 
-1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary.
+1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary. The proof server URL is optional and likely won't be present, as being replaced with a more flexible `getProvingProvider` API.
 2. The DApp can double check if `networkId` present in configuration matches the requested one
 3. In the configuration object, the wallet must point to service deployments, which are compatible with network id present, and preferably are the same that the wallet itself uses for particular network.
 

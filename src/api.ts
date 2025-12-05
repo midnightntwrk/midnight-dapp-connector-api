@@ -192,7 +192,7 @@ export type Configuration = {
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
   /**
-   * Prover Server URI
+   * Prover Server URI, likely to not be present, as different proving modalities emerge
    * @deprecated Use `getProvingProvider` instead
    */
   proverServerUri?: string | undefined;
