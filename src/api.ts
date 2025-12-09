@@ -19,6 +19,13 @@
  */
 export type InitialAPI = {
   /**
+   * Wallet identifier, in a reverse DNS notation (e.g. `com.example.wallet`).
+   * Wallets should keep this identifier stable throughout the lifecycle of the product.
+   * DApps can use this property to identify the wallet, but should be prepared to handle
+   * values that are unknown, invalid, or potentially misleading, similar to handling user agent strings in web browsers.
+   */
+  rdns: string;
+  /**
    * Wallet name, expected to be displayed to the user.
    * As such, DApps need to sanitize the name to prevent XSS when displaying it to the user. An example
    * of sanitization is displaying the name using a text node.
