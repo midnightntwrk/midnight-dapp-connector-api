@@ -16,6 +16,7 @@
  * chose and initiate a connection to the wallet.
  * Wallets inject their Initial API under the `window.midnight` object.
  * A single wallet can inject multiple instances of the Initial API, e.g. when supporting multiple versions.
+ * Together with UUID under which the initial API is installed, the contents are compatible with the [draft of CAIP-372](https://github.com/ChainAgnostic/CAIPs/pull/372/files).
  */
 export type InitialAPI = {
   /**

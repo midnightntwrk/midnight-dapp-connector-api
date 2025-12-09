@@ -14,7 +14,7 @@ What raises additional concern to this API is potential presence of multiple bro
 
 ### Initial API
 
-The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established.
+The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established. Together with UUID under which the initial API is installed, the contents are compatible with the [draft of CAIP-372](https://github.com/ChainAgnostic/CAIPs/pull/372/files).
 
 ```ts
 type InitialAPI = {
