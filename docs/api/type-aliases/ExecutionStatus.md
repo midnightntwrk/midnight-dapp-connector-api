@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Type Alias: ExecutionStatus
 
-> **ExecutionStatus**: `Record`\<`number`, `"Success"` \| `"Failure"`\>
+> **ExecutionStatus** = `Record`\<`number`, `"Success"` \| `"Failure"`\>
 
 Execution status of a transaction.
 It indicates which sections of a transaction were executed successfully or not.

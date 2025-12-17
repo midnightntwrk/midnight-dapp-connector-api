@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Type Alias: Configuration
 
-> **Configuration**: `object`
+> **Configuration** = `object`
 
-## Type declaration
+## Properties
 
 ### indexerUri
 
@@ -16,23 +16,35 @@
 
 Indexer URI
 
+***
+
 ### indexerWsUri
 
 > **indexerWsUri**: `string`
 
 Indexer WebSocket URI
 
+***
+
 ### networkId
 
-> **networkId**: `string` \| `NetworkId`
+> **networkId**: `string`
 
 Network id connected to - present here mostly for completness and to allow dapp validate it is connected to the network it wishes to
 
-### proverServerUri
+***
 
-> **proverServerUri**: `string`
+### ~~proverServerUri?~~
 
-Prover Server URI
+> `optional` **proverServerUri**: `string`
+
+Prover Server URI, likely to not be present, as different proving modalities emerge
+
+#### Deprecated
+
+Use `getProvingProvider` instead
+
+***
 
 ### substrateNodeUri
 

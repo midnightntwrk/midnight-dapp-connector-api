@@ -14,12 +14,14 @@ What raises additional concern to this API is potential presence of multiple bro
 
 ### Initial API
 
-The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established.
+The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established. Together with UUID under which the initial API is installed, the contents are compatible with the [draft of CAIP-372](https://github.com/ChainAgnostic/CAIPs/pull/372/files).
 
 ```ts
-import { type NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
-
 type InitialAPI = {
+  /**
+   * Wallet identifier, in a reverse DNS notation (e.g. `com.example.wallet`)
+   */
+  rdns: string;
   /**
    * Wallet name, expected to be displayed to the user
    */  
@@ -35,7 +37,7 @@ type InitialAPI = {
   /**
    * Connect to wallet, hinting desired network id
    */
-  connect: (networkId: string | NetworkId) => Promise<ConnectedAPI>;
+  connect: (networkId: string) => Promise<ConnectedAPI>;
 };
 ```
 
@@ -52,14 +54,20 @@ declare global {
 ```
 
 Here, some responsibilities lie on both DApp and Wallet:
-1. The DApp should not rely on the contents of the key in the `midnight` object, as it can be arbitrary string and defined arbitrarily by the implementor. The wallet can use their name as the identifier, but a randomized string, like UUID is equally valid option.
-2. In case multiple wallets install their API - the DApp should present the user with way to choose the wallet to use for the interaction
-3. From DApp perspective, both name and icon are potentially malicious input, and thus - they should be sanitized before being presented to the user. In particular - the icon should always be rendered inside an `img` tag to prevent XSS from JavaScript embedded in SVG.
-4. DApp should always check the `apiVersion` against supported range of versions (following semver semantics) and the DApp must not attempt to connect or present to the user initial APIs that are annotated with an unsupported API version.
-5. Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
-6. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
-7. For connecting:
-   - The DApp must provide network id it wants to connect to
+1. The first wallet to install global `midnight` property must do it in a way, which prevents further tampering or unwanted overrides, e.g. `Object.defineProperty(window, 'midnight', { value: Object.create(null), writable: false, configurable: false });`
+2. The wallet must install its initial API(s) under a key being a freshly-generated UUIDv4.
+3. The `InitialAPI` object, as well as later returned `ConnectedAPI` object must be frozen, that is extensions are prevented, and existing properties are non-writable and non-configurable.
+4. The `InitialAPI` objects must be installed under the global `midnight` object in a way, which prevents overrides, e.g. `Object.defineProperty(window.midnight, uuid(), {configurable: false, writable: false, enumerable: true, value: initialAPI})`.
+5. In case multiple initial APIs are defined - the DApp must present the user with way to choose the wallet to use for the interaction
+6. From DApp perspective, both name and icon are potentially malicious or misleading input, and thus - they should be sanitized before being presented to the user. In particular - the icon should always be rendered inside an `img` tag to prevent XSS from JavaScript embedded in SVG.
+7. DApp must always check the `apiVersion` against supported range of versions (following semver semantics) and the DApp must not attempt to connect or present to the user initial APIs that are annotated with an unsupported API version.
+8. Wallet should keep stable `rdns` throught lifecycle of the product.
+9. DApp must be prepared to handle `rdns` values that are unknown, invalid, or potentially misleading, similar to handling user agent strings in web browsers.
+10. DApp should verify initial API instances provided against possible malicious extensions (like multiple APIs with same or very similar `rdns` and/or `name` and overlapping `apiVersion`s). When DApp detects such situation it must notify the user.
+11. The Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
+12. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
+13. For connecting:
+   - The DApp must provide network id it wants to connect to; The network id of mainnet is `mainnet`
    - The DApp should not call `connect` method of the initial API multiple times unless necessary (e.g. to retry connection)
    - The wallet must reject connection request if it can't connect to the network with id provided by the DApp
    - The wallet may ask user for the scope of permissions provided to the DApp and indicate what network the DApp wants to connect to. It is up to the wallet implementation to decide how exactly and when exactly user is asked for confirmation
@@ -70,6 +78,8 @@ Here, some responsibilities lie on both DApp and Wallet:
 Once connected, wallet provides connected API - one which allow for specific interaction with the wallet.
 
 Main intention behind the connected API design is to enable many useful DApps, but also - to maintain separation of responsibilities between DApps and wallets. Wallets should not be concerned about preparing the right contract calls and preparing whole transaction as the DApp needs it, but also DApps should not be concerned with key management or wallet-specific operations like coin selection. For that reason, no API provides direct access to shielded coins or unshielded UTxOs, and instead DApps can ask wallet to prepare a transaction having specific effect using methods like `makeTransfer` or `makeIntent`. At the same time, main API allowing DApps to use tokens in contracts and have wallet pay fees is `balanceTransaction` - there, the DApp is expected to provide a transaction containing with desired effects (like contract calls, or some token outputs), and the wallet must ensure that fees are paid, as well as necessary inputs and outputs are provided to fully balance each token movement, so that DApp can focus solely on its desired effects.
+
+Importantly, the Connected API also allows delegating proof generation to the wallet. It is to offer bigger flexibility and conformance to user's choices as some of proving modalities might require some additional configuration or preparational steps, which eventually might be too demanding for every DApp to support.
 
 The connected API consists of couple of parts, each always present, but its methods may throw an error indicating lack of permission:
 ```ts
@@ -151,7 +161,7 @@ type Configuration = {
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
   /**  Prover Server URI */
-  proverServerUri: string;
+  proverServerUri?: string | undefined;
   /**  Substrate URI */
   substrateNodeUri: string;
 
@@ -165,6 +175,10 @@ type AccessConfiguration = {
    * Status of an existing connection to wallet
    */
   getConnectionStatus(): Promise<ConnectionStatus>;
+}
+
+type DelegateProving = {
+  getProvingProvider(keyMaterialProvider: KeyMaterialProvider): Promise<ProvingProvider>;
 }
 
 type SubmitTransaction = {
@@ -181,6 +195,7 @@ type WalletConnectedAPI =
   & DustAddress
   & InitActions 
   & AccessConfiguration 
+  & DelegateProving
   & SubmitTransactions
 
 type ExecutionStatus = Record<number, "Success" | "Failure">;
@@ -275,6 +290,24 @@ type ConnectionStatus =
       status: "disconnected";
     };
 
+export type KeyMaterialProvider = {
+  getZKIR(circuitKeyLocation: string): Promise<Uint8Array>;
+  getProverKey(circuitKeyLocation: string): Promise<Uint8Array>;
+  getVerifierKey(circuitKeyLocation: string): Promise<Uint8Array>;
+}
+
+export type ProvingProvider = {
+  check(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+  ): Promise<(bigint | undefined)[]>;
+  prove(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+    overwriteBindingInput?: bigint,
+  ): Promise<Uint8Array>;
+};
+
 type HintUsage = {
   hintUsage(methodNames: Array<keyof ConnectedAPI>): Promise<void>;
 }
@@ -291,7 +324,7 @@ type ConnectedAPI = WalletConnectedAPI & HintUsage;
 
 #### Initialization and configuration
 
-1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary.
+1. The DApp should connect to indexer and proving server indicated by configuration, therefore wallet should not limit access to the `getConfiguration` method unless absolutely necessary. The proof server URL is optional and likely won't be present, as being replaced with a more flexible `getProvingProvider` API.
 2. The DApp can double check if `networkId` present in configuration matches the requested one
 3. In the configuration object, the wallet must point to service deployments, which are compatible with network id present, and preferably are the same that the wallet itself uses for particular network.
 
@@ -322,6 +355,19 @@ There exist 5 methods related to transactions: `makeTransfer`, `makeIntent`, `ba
 #### Signing
 
 In order to make it impossible to sign transactions by accident, wallet receiving call to `signData` must prefix data with string `midnight_signed_message:<data_size>:`, where `<data_size>` is data size in bytes.
+
+#### Proving
+
+The `getProvingProvider` method takes an object being able to resolve on-demand circuit representations needed for proving and verifying - its ZKIR (intermediate representation), prover key (low level representation needed for proving) and verifier key (low level representation needed for verification). It returns a `ProvingProvider` interface compatible with the one defined in Midnight's Ledger WASM bindings. The `KeyMaterialProvider` is almost the same as `ZKConfigProvider` defined in Midnight.js. Such pairing of interfaces enables:
+- the proving implementation to cache prover keys, which may be quite big (often 10MB-20MB, sometimes event 80MB and more) and use the verifer keys or ZKIR for the resolution (which are significantly smaller)
+- easy usage from Midnight.js
+
+> [!NOTE]
+> In the case of particularly complex circuits, the size of the prover key might reach 80MB and more (while the average does not seem to exceed 20MB). Sizes like this come close to, or even exceed message size limits of different transport methods. The wallet must take that into account when implementing the proving provider.
+
+Here, it is crucial for the DApp and the wallet to acknowledge:
+- the proof preimages submitted for proving contain the exact private data which the proof itself hides, so the wallet can learn them
+- the wallet de-facto owns the user experience around proving, which may be a very time-consuming operation (up to several minutes in the most pessimistic scenarios), and the details of the behavior will depend on the proving modality provided by the wallet
 
 ### Errors
 
@@ -392,8 +438,9 @@ It seems that in many practical scenarios delivering good, seamless UX by the DA
 ### Connect
 
 ```ts
-declare function semverMatch(version, expectedRange);
+declare function semverMatch(version, expectedRange): boolean;
 declare function askUserToSelect(wallets: InitialAPI[]): Promise<InitialAPI>;
+declare function warnUser(message: string): Promise<void>;
 
 
 async function connect(): Promise<ConnectedAPI> {
@@ -401,6 +448,12 @@ async function connect(): Promise<ConnectedAPI> {
 
   const compatibleWallets = Object.values(window.midnight ?? {})
     .filter((wallet) => semverMatch(wallet.apiVersion, '^1.0'));
+
+  const uniqueRdns = new Set(compatibleWallets.map(w => w.rdns.trim()));
+
+  if (uniqueRdns.size() < compatibleWallets.length) {
+    await warnUser('Duplicate wallets found, some may be fake');
+  }
 
   const selectedWallet = await askUserToSelect(compatibleWallets);
   const connectedWallet = await selectedWallet.connect(networkId);

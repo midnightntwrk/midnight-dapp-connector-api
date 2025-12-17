@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,19 +6,23 @@
 
 # Type Alias: DesiredInput
 
-> **DesiredInput**: `object`
+> **DesiredInput** = `object`
 
 Desired input from an intent. It specifies the type of the input and the amount to provide.
 
-## Type declaration
+## Properties
 
 ### kind
 
 > **kind**: `"shielded"` \| `"unshielded"`
 
+***
+
 ### type
 
 > **type**: [`TokenType`](TokenType.md)
+
+***
 
 ### value
 

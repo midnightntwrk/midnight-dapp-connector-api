@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,11 +6,13 @@
 
 # Type Alias: HintUsage
 
-> **HintUsage**: `object`
+> **HintUsage** = `object`
 
-## Type declaration
+## Methods
 
 ### hintUsage()
+
+> **hintUsage**(`methodNames`): `Promise`\<`void`\>
 
 Hint usage of methods to the wallet.
 

@@ -1,8 +1,8 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](README.md)
 
 ***
 
-# @midnight-ntwrk/dapp-connector-api v4.0.0-beta.1
+# @midnight-ntwrk/dapp-connector-api v4.0.0-beta.2
 
 ## Type Aliases
 
@@ -17,6 +17,8 @@
 - [HintUsage](type-aliases/HintUsage.md)
 - [HistoryEntry](type-aliases/HistoryEntry.md)
 - [InitialAPI](type-aliases/InitialAPI.md)
+- [KeyMaterialProvider](type-aliases/KeyMaterialProvider.md)
+- [ProvingProvider](type-aliases/ProvingProvider.md)
 - [Signature](type-aliases/Signature.md)
 - [SignDataOptions](type-aliases/SignDataOptions.md)
 - [TokenType](type-aliases/TokenType.md)

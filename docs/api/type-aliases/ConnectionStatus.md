@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,18 +6,18 @@
 
 # Type Alias: ConnectionStatus
 
-> **ConnectionStatus**: \{ `networkId`: `string` \| `NetworkId`; `status`: `"connected"`; \} \| \{ `status`: `"disconnected"`; \}
+> **ConnectionStatus** = \{ `networkId`: `string`; `status`: `"connected"`; \} \| \{ `status`: `"disconnected"`; \}
 
 Status of an existing connection to wallet
 It either indicates that the connection is established to a specific network id, or that the connection is lost
 
-## Type declaration
+## Type Declaration
 
-\{ `networkId`: `string` \| `NetworkId`; `status`: `"connected"`; \}
+\{ `networkId`: `string`; `status`: `"connected"`; \}
 
 ### networkId
 
-> **networkId**: `string` \| `NetworkId`
+> **networkId**: `string`
 
 ### status
 

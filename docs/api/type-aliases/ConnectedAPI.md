@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Type Alias: ConnectedAPI
 
-> **ConnectedAPI**: [`WalletConnectedAPI`](WalletConnectedAPI.md) & [`HintUsage`](HintUsage.md)
+> **ConnectedAPI** = [`WalletConnectedAPI`](WalletConnectedAPI.md) & [`HintUsage`](HintUsage.md)
 
 Connected API. It allows DApp to perform a range ofactions on the wallet after it is connected. Specifically the operations provided are:
 - interaction with wallet - [WalletConnectedAPI](WalletConnectedAPI.md) covers those

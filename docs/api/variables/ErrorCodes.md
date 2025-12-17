@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -10,7 +10,7 @@
 
 All possible error codes gathered in a single object.
 
-## Type declaration
+## Type Declaration
 
 ### Disconnected
 

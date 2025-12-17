@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,17 +6,19 @@
 
 # Type Alias: HistoryEntry
 
-> **HistoryEntry**: `object`
+> **HistoryEntry** = `object`
 
 Minimal information about a transaction relevant for the wallet.
 
-## Type declaration
+## Properties
 
 ### txHash
 
 > **txHash**: `string`
 
 Hex-encoded hash of transaction
+
+***
 
 ### txStatus
 
