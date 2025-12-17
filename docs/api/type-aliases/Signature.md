@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,11 +6,11 @@
 
 # Type Alias: Signature
 
-> **Signature**: `object`
+> **Signature** = `object`
 
 Signature, accompanied by data signed and verifying key
 
-## Type declaration
+## Properties
 
 ### data
 
@@ -18,9 +18,13 @@ Signature, accompanied by data signed and verifying key
 
 The data signed
 
+***
+
 ### signature
 
 > **signature**: `string`
+
+***
 
 ### verifyingKey
 

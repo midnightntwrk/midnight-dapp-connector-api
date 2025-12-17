@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Type Alias: TxStatus
 
-> **TxStatus**: \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"finalized"`; \} \| \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"confirmed"`; \} \| \{ `status`: `"pending"`; \} \| \{ `status`: `"discarded"`; \}
+> **TxStatus** = \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"finalized"`; \} \| \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"confirmed"`; \} \| \{ `status`: `"pending"`; \} \| \{ `status`: `"discarded"`; \}
 
-## Type declaration
+## Type Declaration
 
 \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"finalized"`; \}
 

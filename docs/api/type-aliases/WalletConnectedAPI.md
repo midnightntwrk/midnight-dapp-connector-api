@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Type Alias: WalletConnectedAPI
 
-> **WalletConnectedAPI**: `object`
+> **WalletConnectedAPI** = `object`
 
 Wallet connected API. It is a subset of the Connected API defining all wallet-relevant methods.
 Full Connected API also implements [HintUsage](HintUsage.md). The operations provided cover all necessary
@@ -17,18 +17,20 @@ functionality for a DApp to interact with the wallet:
 - initializing intents (for swaps)
 - signing data
 
-## Type declaration
+## Methods
 
 ### balanceSealedTransaction()
+
+> **balanceSealedTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
 
 Take sealed transaction (with proofs, signatures and cryptographically bound),
 pay fees, add necessary inputs and outputs to remove imbalances from it,
 returning a transaction ready for submission
 
 This method is mainly expected to be used by DApps when they operate on transactions created by the wallet or when the DApp wants to be sure that wallet performs balancing in a separate intent.
-In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use [balanceUnsealedTransaction](WalletConnectedAPI.md#balanceunsealedtransaction) instead.
+In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use [balanceUnsealedTransaction](#balanceunsealedtransaction) instead.
 
-In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
+In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
 
 #### Parameters
 
@@ -40,7 +42,11 @@ In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a seri
 
 `Promise`\<\{ `tx`: `string`; \}\>
 
+***
+
 ### balanceUnsealedTransaction()
+
+> **balanceUnsealedTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
 
 Take unsealed transaction (with proofs, with no signatures and with preimage
 data for cryptographic binding), pay fees, add necessary inputs and outputs
@@ -48,7 +54,7 @@ to remove imbalances from it, returning a transaction ready for submission
 
 This method is expected to be used by DApps when interacting with contracts - in many cases when contracts interact with native tokens, where wallet may need to add inputs and outputs to an existing intent to properly balance the transaction.
 
-In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a serialized transaction of type `Transaction<SignatureErased, Proof, PreBinding>`
+In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
 
 #### Parameters
 
@@ -60,7 +66,11 @@ In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a seri
 
 `Promise`\<\{ `tx`: `string`; \}\>
 
+***
+
 ### getConfiguration()
+
+> **getConfiguration**(): `Promise`\<[`Configuration`](Configuration.md)\>
 
 Get the configuration of the services used by the wallet.
 
@@ -70,7 +80,11 @@ It is important for DApps to make use of those services whenever possible, as th
 
 `Promise`\<[`Configuration`](Configuration.md)\>
 
+***
+
 ### getConnectionStatus()
+
+> **getConnectionStatus**(): `Promise`\<[`ConnectionStatus`](ConnectionStatus.md)\>
 
 Status of an existing connection to wallet
 
@@ -80,7 +94,11 @@ DApps can use this method to check if the connection is still valid.
 
 `Promise`\<[`ConnectionStatus`](ConnectionStatus.md)\>
 
+***
+
 ### getDustAddress()
+
+> **getDustAddress**(): `Promise`\<\{ `dustAddress`: `string`; \}\>
 
 Get the Dust address of the wallet. It is provided in Bech32m format.
 
@@ -88,7 +106,11 @@ Get the Dust address of the wallet. It is provided in Bech32m format.
 
 `Promise`\<\{ `dustAddress`: `string`; \}\>
 
+***
+
 ### getDustBalance()
+
+> **getDustBalance**(): `Promise`\<\{ `balance`: `bigint`; `cap`: `bigint`; \}\>
 
 Get the balance of Dust of the wallet. It reports both:
 - the current balance (which may change over time due to generation mechanics)
@@ -98,7 +120,33 @@ Get the balance of Dust of the wallet. It reports both:
 
 `Promise`\<\{ `balance`: `bigint`; `cap`: `bigint`; \}\>
 
+***
+
+### getProvingProvider()
+
+> **getProvingProvider**(`keyMaterialProvider`): `Promise`\<[`ProvingProvider`](ProvingProvider.md)\>
+
+Obtain the proving provider from the wallet to delegate proving to the wallet.
+
+#### Parameters
+
+##### keyMaterialProvider
+
+[`KeyMaterialProvider`](KeyMaterialProvider.md)
+
+object resolving prover and verifier keys, as well as the ZKIR representation of the circuit; `KeyMaterialProvider` is almost identical to the one in Midnight.js's `ZKConfigProvider` (https://github.com/midnightntwrk/midnight-js/blob/main/packages/types/src/zk-config-provider.ts#L25)
+
+#### Returns
+
+`Promise`\<[`ProvingProvider`](ProvingProvider.md)\>
+
+A `ProvingProvider` instance, compatible with Ledger's ProvingProvider (https://github.com/midnightntwrk/midnight-ledger/blob/main/ledger-wasm/ledger-v6.template.d.ts#L992)
+
+***
+
 ### getShieldedAddresses()
+
+> **getShieldedAddresses**(): `Promise`\<\{ `shieldedAddress`: `string`; `shieldedCoinPublicKey`: `string`; `shieldedEncryptionPublicKey`: `string`; \}\>
 
 Get the shielded addresses of the wallet. For convenience it also returns the coin public key and encryption public key.
 All of them are provided in Bech32m format.
@@ -107,7 +155,11 @@ All of them are provided in Bech32m format.
 
 `Promise`\<\{ `shieldedAddress`: `string`; `shieldedCoinPublicKey`: `string`; `shieldedEncryptionPublicKey`: `string`; \}\>
 
+***
+
 ### getShieldedBalances()
+
+> **getShieldedBalances**(): `Promise`\<`Record`\<`string`, `bigint`\>\>
 
 Get the balances of shielded tokens of the wallet. They are represented as a record, whose keys are token types.
 
@@ -115,7 +167,11 @@ Get the balances of shielded tokens of the wallet. They are represented as a rec
 
 `Promise`\<`Record`\<`string`, `bigint`\>\>
 
+***
+
 ### getTxHistory()
+
+> **getTxHistory**(`pageNumber`, `pageSize`): `Promise`\<[`HistoryEntry`](HistoryEntry.md)[]\>
 
 Get the history of transactions of the wallet. Each history entry is a simplistic record of the fact that a transaction is relevant to the wallet.
 
@@ -133,7 +189,11 @@ Get the history of transactions of the wallet. Each history entry is a simplisti
 
 `Promise`\<[`HistoryEntry`](HistoryEntry.md)[]\>
 
+***
+
 ### getUnshieldedAddress()
+
+> **getUnshieldedAddress**(): `Promise`\<\{ `unshieldedAddress`: `string`; \}\>
 
 Get the unshielded address of the wallet. It is provided in Bech32m format.
 
@@ -141,7 +201,11 @@ Get the unshielded address of the wallet. It is provided in Bech32m format.
 
 `Promise`\<\{ `unshieldedAddress`: `string`; \}\>
 
+***
+
 ### getUnshieldedBalances()
+
+> **getUnshieldedBalances**(): `Promise`\<`Record`\<`string`, `bigint`\>\>
 
 Get the balances of unshielded tokens (potentially including Night) of the wallet. They are represented as a record, whose keys are token types.
 
@@ -149,7 +213,11 @@ Get the balances of unshielded tokens (potentially including Night) of the walle
 
 `Promise`\<`Record`\<`string`, `bigint`\>\>
 
+***
+
 ### makeIntent()
+
+> **makeIntent**(`desiredInputs`, `desiredOutputs`, `options`): `Promise`\<\{ `tx`: `string`; \}\>
 
 Initialize a transaction with unbalanced intent containing desired inputs and outputs.
 Primary use-case for this method is to create a transaction, which inits a swap
@@ -184,7 +252,11 @@ Options:
 
 `Promise`\<\{ `tx`: `string`; \}\>
 
+***
+
 ### makeTransfer()
+
+> **makeTransfer**(`desiredOutputs`): `Promise`\<\{ `tx`: `string`; \}\>
 
 Initialize a transfer transaction with desired outputs
 
@@ -198,7 +270,11 @@ Initialize a transfer transaction with desired outputs
 
 `Promise`\<\{ `tx`: `string`; \}\>
 
+***
+
 ### signData()
+
+> **signData**(`data`, `options`): `Promise`\<[`Signature`](Signature.md)\>
 
 Sign provided data using key and format specified in the options, data to sign will be prepended with right prefix
 
@@ -216,7 +292,11 @@ Sign provided data using key and format specified in the options, data to sign w
 
 `Promise`\<[`Signature`](Signature.md)\>
 
+***
+
 ### submitTransaction()
+
+> **submitTransaction**(`tx`): `Promise`\<`void`\>
 
 Submit a transaction to the network, effectively using wallet as a relayer.
 

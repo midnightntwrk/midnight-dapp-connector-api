@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Type Alias: APIError
 
-> **APIError**: `Error` & `object`
+> **APIError** = `Error` & `object`
 
 Declaration of the error type thrown by the DApp Connector.
 
@@ -14,7 +14,7 @@ It is not a class extending the base `Error` type, because
 it would make it difficult to implement in a way where `instanceof APIError` would work.
 Instead a check like `error.type === 'DAppConnectorAPIError'` should be used.
 
-## Type declaration
+## Type Declaration
 
 ### code
 

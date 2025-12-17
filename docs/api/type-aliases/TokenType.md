@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,6 +6,6 @@
 
 # Type Alias: TokenType
 
-> **TokenType**: `string`
+> **TokenType** = `string`
 
 Type of a token. It will be a hex-encoded string relating to ledger's raw token type.

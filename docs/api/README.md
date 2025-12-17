@@ -1,4 +1,4 @@
-**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**
+**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**
 
 ***
 
@@ -192,7 +192,7 @@ try {
 ```
 
 ## Examples
-In this section, you'll find examples demonstrating how to fully utilize the DApp connector API.
+In this section, you'll find examples demonstrating how to utilize the DApp connector API.
 
 ### Connect
 
@@ -264,3 +264,73 @@ const connectedWallet = await connect();
 const balancedTx = await connectedWallet.balanceSealedTransaction(tx);
 await connectedWallet.submitTransaction(balancedTx);
 ```
+
+### Delegate proving
+
+```ts
+import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+import { Transaction } from '@midnight-ntwrk/ledger-v6';
+
+const keyMaterialProvider = new FetchZkConfigProvider('https://example.com');
+
+const connectedAPI = await connect();
+const provingProvider = connectedAPI.getProvingProvider(keyMaterialProvider);
+
+// Let's prepare the transaction and their inputs
+const costModel = await fetchCostModel(); // E.g. from Indexer, using `Block.ledgerParameters`: https://github.com/midnightntwrk/midnight-indexer/blob/main/indexer-api/graphql/schema-v3.graphql#L36
+const unprovedTx = prepareUnprovenTransaction(costModel); // E.g. make a contract call
+
+// Now the proving itself:
+const provenTx = await unprovenTx.prove(provingProvider, costModel);
+
+// Now the transaction can be e.g. balanced (to pay fees) and submitted:
+const finalTx = await connectedAPI.balancedUnsealedTransaction(provenTx);
+await connectedAPI.submitTransaction(finalTx);
+```
+
+### LICENSE
+
+Apache 2.0.
+
+### README.md
+
+Provides a brief description for users and developers who want to understand the purpose, setup, and usage of the repository.
+
+### SECURITY.md
+
+Provides a brief description of the Midnight Foundation's security policy and how to properly disclose security issues.
+
+### CONTRIBUTING.md
+
+Provides guidelines for how people can contribute to the Midnight project.
+
+### CODEOWNERS
+
+Defines repository ownership rules.
+
+### ISSUE_TEMPLATE
+
+Provides templates for reporting various types of issues, such as: bug report, documentation improvement and feature request.
+
+### PULL_REQUEST_TEMPLATE
+
+Provides a template for a pull request.
+
+### CLA Assistant
+
+The Midnight Foundation appreciates contributions, and like many other open source projects asks contributors to sign a contributor
+License Agreement before accepting contributions. We use CLA assistant (https://github.com/cla-assistant/cla-assistant) to streamline the CLA
+signing process, enabling contributors to sign our CLAs directly within a GitHub pull request.
+
+### Dependabot
+
+The Midnight Foundation uses GitHub Dependabot feature to keep our projects dependencies up-to-date and address potential security vulnerabilities.
+
+### Checkmarx
+
+The Midnight Foundation uses Checkmarx for application security (AppSec) to identify and fix security vulnerabilities.
+All repositories are scanned with Checkmarx's suite of tools including: Static Application Security Testing (SAST), Infrastructure as Code (IaC), Software Composition Analysis (SCA), API Security, Container Security and Supply Chain Scans (SCS).
+
+### Unito
+
+Facilitates two-way data synchronization, automated workflows and streamline processes between: Jira, GitHub issues and Github project Kanban board.

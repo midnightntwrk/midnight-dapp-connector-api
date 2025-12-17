@@ -1,4 +1,4 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.1**](../README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.0.0-beta.2**](../README.md)
 
 ***
 
@@ -6,11 +6,11 @@
 
 # Type Alias: SignDataOptions
 
-> **SignDataOptions**: `object`
+> **SignDataOptions** = `object`
 
 Options for signing data. It specified which key to use for signing and how the data to sign is encoded.
 
-## Type declaration
+## Properties
 
 ### encoding
 
@@ -21,6 +21,8 @@ How are data for signing encoded.
   the wallet must decode them into binary sequence first
 "text" means the data should be signed as provided in the string, but encoded into UTF-8 as a normalization step.
   Conversion is necessary, because JS strings are UTF-16
+
+***
 
 ### keyType
 
