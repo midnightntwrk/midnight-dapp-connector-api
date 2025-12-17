@@ -14,12 +14,14 @@ What raises additional concern to this API is potential presence of multiple bro
 
 ### Initial API
 
-The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established.
+The initial API of a wallet is an object containing information about the wallet, as well as a method allowing to connect to it or check if a connection is established. Together with UUID under which the initial API is installed, the contents are compatible with the [draft of CAIP-372](https://github.com/ChainAgnostic/CAIPs/pull/372/files).
 
 ```ts
-import { type NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
-
 type InitialAPI = {
+  /**
+   * Wallet identifier, in a reverse DNS notation (e.g. `com.example.wallet`)
+   */
+  rdns: string;
   /**
    * Wallet name, expected to be displayed to the user
    */  
@@ -35,7 +37,7 @@ type InitialAPI = {
   /**
    * Connect to wallet, hinting desired network id
    */
-  connect: (networkId: string | NetworkId) => Promise<ConnectedAPI>;
+  connect: (networkId: string) => Promise<ConnectedAPI>;
 };
 ```
 
@@ -52,13 +54,19 @@ declare global {
 ```
 
 Here, some responsibilities lie on both DApp and Wallet:
-1. The DApp should not rely on the contents of the key in the `midnight` object, as it can be arbitrary string and defined arbitrarily by the implementor. The wallet can use their name as the identifier, but a randomized string, like UUID is equally valid option.
-2. In case multiple wallets install their API - the DApp should present the user with way to choose the wallet to use for the interaction
-3. From DApp perspective, both name and icon are potentially malicious input, and thus - they should be sanitized before being presented to the user. In particular - the icon should always be rendered inside an `img` tag to prevent XSS from JavaScript embedded in SVG.
-4. DApp should always check the `apiVersion` against supported range of versions (following semver semantics) and the DApp must not attempt to connect or present to the user initial APIs that are annotated with an unsupported API version.
-5. Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
-6. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
-7. For connecting:
+1. The first wallet to install global `midnight` property must do it in a way, which prevents further tampering or unwanted overrides, e.g. `Object.defineProperty(window, 'midnight', { value: Object.create(null), writable: false, configurable: false });`
+2. The wallet must install its initial API(s) under a key being a freshly-generated UUIDv4.
+3. The `InitialAPI` object, as well as later returned `ConnectedAPI` object must be frozen, that is extensions are prevented, and existing properties are non-writable and non-configurable.
+4. The `InitialAPI` objects must be installed under the global `midnight` object in a way, which prevents overrides, e.g. `Object.defineProperty(window.midnight, uuid(), {configurable: false, writable: false, enumerable: true, value: initialAPI})`.
+5. In case multiple initial APIs are defined - the DApp must present the user with way to choose the wallet to use for the interaction
+6. From DApp perspective, both name and icon are potentially malicious or misleading input, and thus - they should be sanitized before being presented to the user. In particular - the icon should always be rendered inside an `img` tag to prevent XSS from JavaScript embedded in SVG.
+7. DApp must always check the `apiVersion` against supported range of versions (following semver semantics) and the DApp must not attempt to connect or present to the user initial APIs that are annotated with an unsupported API version.
+8. Wallet should keep stable `rdns` throught lifecycle of the product.
+9. DApp must be prepared to handle `rdns` values that are unknown, invalid, or potentially misleading, similar to handling user agent strings in web browsers.
+10. DApp should verify initial API instances provided against possible malicious extensions (like multiple APIs with same or very similar `rdns` and/or `name` and overlapping `apiVersion`s). When DApp detects such situation it must notify the user.
+11. The Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
+12. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
+13. For connecting:
    - The DApp must provide network id it wants to connect to; The network id of mainnet is `mainnet`
    - The DApp should not call `connect` method of the initial API multiple times unless necessary (e.g. to retry connection)
    - The wallet must reject connection request if it can't connect to the network with id provided by the DApp
@@ -392,8 +400,9 @@ It seems that in many practical scenarios delivering good, seamless UX by the DA
 ### Connect
 
 ```ts
-declare function semverMatch(version, expectedRange);
+declare function semverMatch(version, expectedRange): boolean;
 declare function askUserToSelect(wallets: InitialAPI[]): Promise<InitialAPI>;
+declare function warnUser(message: string): Promise<void>;
 
 
 async function connect(): Promise<ConnectedAPI> {
@@ -401,6 +410,12 @@ async function connect(): Promise<ConnectedAPI> {
 
   const compatibleWallets = Object.values(window.midnight ?? {})
     .filter((wallet) => semverMatch(wallet.apiVersion, '^1.0'));
+
+  const uniqueRdns = new Set(compatibleWallets.map(w => w.rdns.trim()));
+
+  if (uniqueRdns.size() < compatibleWallets.length) {
+    await warnUser('Duplicate wallets found, some may be fake');
+  }
 
   const selectedWallet = await askUserToSelect(compatibleWallets);
   const connectedWallet = await selectedWallet.connect(networkId);
