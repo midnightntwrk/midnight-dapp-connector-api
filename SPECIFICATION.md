@@ -59,7 +59,7 @@ Here, some responsibilities lie on both DApp and Wallet:
 5. Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
 6. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
 7. For connecting:
-   - The DApp must provide network id it wants to connect to
+   - The DApp must provide network id it wants to connect to; The network id of mainnet is `mainnet`
    - The DApp should not call `connect` method of the initial API multiple times unless necessary (e.g. to retry connection)
    - The wallet must reject connection request if it can't connect to the network with id provided by the DApp
    - The wallet may ask user for the scope of permissions provided to the DApp and indicate what network the DApp wants to connect to. It is up to the wallet implementation to decide how exactly and when exactly user is asked for confirmation
