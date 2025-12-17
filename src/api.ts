@@ -158,6 +158,16 @@ export type WalletConnectedAPI = {
    * The transaction received is expected to be balanced and "sealed" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from `@midnight-ntwrk/ledger`)
    */
   submitTransaction(tx: string): Promise<void>;
+
+  /**
+   * Obtain the proving provider from the wallet to delegate proving to the wallet.
+   *
+   * @param keyMaterialProvider - object resolving prover and verifier keys, as well as the ZKIR representation of the circuit; `KeyMaterialProvider` is almost identical to the one in Midnight.js's `ZKConfigProvider` (https://github.com/midnightntwrk/midnight-js/blob/main/packages/types/src/zk-config-provider.ts#L25)
+   *
+   * @returns A `ProvingProvider` instance, compatible with Ledger's ProvingProvider (https://github.com/midnightntwrk/midnight-ledger/blob/main/ledger-wasm/ledger-v6.template.d.ts#L992)
+   */
+  getProvingProvider(keyMaterialProvider: KeyMaterialProvider): Promise<ProvingProvider>;
+
   /**
    * Get the configuration of the services used by the wallet.
    *
@@ -188,8 +198,11 @@ export type Configuration = {
   indexerUri: string;
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
-  /**  Prover Server URI */
-  proverServerUri: string;
+  /**
+   * Prover Server URI, likely to not be present, as different proving modalities emerge
+   * @deprecated Use `getProvingProvider` instead
+   */
+  proverServerUri?: string | undefined;
   /**  Substrate URI */
   substrateNodeUri: string;
 
@@ -315,3 +328,28 @@ export type ConnectionStatus =
        */
       status: 'disconnected';
     };
+
+/**
+ * Object resolving prover and verifier keys, as well as the ZKIR representation of the circuit.
+ * It is almost identical to the one in Midnight.js's `ZKConfigProvider` (https://github.com/midnightntwrk/midnight-js/blob/main/packages/types/src/zk-config-provider.ts#L25)
+ *
+ * It has separate methods for getting the ZKIR, prover key and verifier key to allow for caching of the keys and to avoid loading the prover key into memory when it is not needed.
+ */
+export type KeyMaterialProvider = {
+  getZKIR(circuitKeyLocation: string): Promise<Uint8Array>;
+  getProverKey(circuitKeyLocation: string): Promise<Uint8Array>;
+  getVerifierKey(circuitKeyLocation: string): Promise<Uint8Array>;
+};
+
+/**
+ * Object abstracting the proving functionality
+ * It is compatible with Ledger's ProvingProvider (https://github.com/midnightntwrk/midnight-ledger/blob/main/ledger-wasm/ledger-v6.template.d.ts#L992)
+ */
+export type ProvingProvider = {
+  check(serializedPreimage: Uint8Array, keyLocation: string): Promise<(bigint | undefined)[]>;
+  prove(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+    overwriteBindingInput?: bigint,
+  ): Promise<Uint8Array>;
+};

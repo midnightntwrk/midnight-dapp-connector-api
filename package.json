@@ -31,6 +31,7 @@
     "deploy": "yarn npm publish",
     "build": "rm -rf ./dist && rollup -c ./rollup.config.mjs",
     "lint": "eslint src",
+    "format": "prettier --write '**/*.{md}'",
     "build:docs": "typedoc --validation --plugin typedoc-plugin-markdown --options typedoc.json"
   },
   "devDependencies": {
