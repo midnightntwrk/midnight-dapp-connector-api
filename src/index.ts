@@ -10,6 +10,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export * from './globals';
-export * from './api';
-export * from './errors';
+
+import './globals';
+
+export type {
+  InitialAPI,
+  ConnectedAPI,
+  WalletConnectedAPI,
+  HintUsage,
+  Configuration,
+  ExecutionStatus,
+  TxStatus,
+  HistoryEntry,
+  DesiredOutput,
+  DesiredInput,
+  TokenType,
+  SignDataOptions,
+  Signature,
+  ConnectionStatus,
+  KeyMaterialProvider,
+  ProvingProvider,
+} from './api';
+
+export { ErrorCodes } from './errors';
+export type { ErrorCode, APIError } from './errors';
