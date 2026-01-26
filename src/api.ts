@@ -106,26 +106,26 @@ export type WalletConnectedAPI = {
    */
   getTxHistory(pageNumber: number, pageSize: number): Promise<HistoryEntry[]>;
   /**
-   * Take unsealed transaction (with proofs, with no signatures and with preimage
+   * Take unbound transaction (with proofs, with no signatures and with preimage
    * data for cryptographic binding), pay fees, add necessary inputs and outputs
    * to remove imbalances from it, returning a transaction ready for submission
    *
    * This method is expected to be used by DApps when interacting with contracts - in many cases when contracts interact with native tokens, where wallet may need to add inputs and outputs to an existing intent to properly balance the transaction.
    *
-   * In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
+   * In relation to Ledger API, this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
    */
-  balanceUnsealedTransaction(tx: string): Promise<{ tx: string }>;
+  balanceUnboundTransaction(tx: string): Promise<{ tx: string }>;
   /**
-   * Take sealed transaction (with proofs, signatures and cryptographically bound),
+   * Take finalized transaction (with proofs, signatures and cryptographically bound),
    * pay fees, add necessary inputs and outputs to remove imbalances from it,
    * returning a transaction ready for submission
    *
    * This method is mainly expected to be used by DApps when they operate on transactions created by the wallet or when the DApp wants to be sure that wallet performs balancing in a separate intent.
-   * In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use {@link balanceUnsealedTransaction} instead.
+   * In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use {@link balanceUnboundTransaction} instead.
    *
-   * In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
+   * In relation to Ledger API, this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
    */
-  balanceSealedTransaction(tx: string): Promise<{ tx: string }>;
+  balanceFinalizedTransaction(tx: string): Promise<{ tx: string }>;
   /**
    * Initialize a transfer transaction with desired outputs
    */
@@ -155,7 +155,7 @@ export type WalletConnectedAPI = {
   /**
    * Submit a transaction to the network, effectively using wallet as a relayer.
    *
-   * The transaction received is expected to be balanced and "sealed" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from `@midnight-ntwrk/ledger`)
+   * The transaction received is expected to be balanced and "finalized" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from ledger library)
    */
   submitTransaction(tx: string): Promise<void>;
 

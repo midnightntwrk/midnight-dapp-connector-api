@@ -19,16 +19,16 @@ functionality for a DApp to interact with the wallet:
 
 ## Methods
 
-### balanceSealedTransaction()
+### balanceFinalizedTransaction()
 
-> **balanceSealedTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
+> **balanceFinalizedTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
 
-Take sealed transaction (with proofs, signatures and cryptographically bound),
+Take finalized transaction (with proofs, signatures and cryptographically bound),
 pay fees, add necessary inputs and outputs to remove imbalances from it,
 returning a transaction ready for submission
 
 This method is mainly expected to be used by DApps when they operate on transactions created by the wallet or when the DApp wants to be sure that wallet performs balancing in a separate intent.
-In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use [balanceUnsealedTransaction](#balanceunsealedtransaction) instead.
+In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use [balanceUnboundTransaction](#balanceunboundtransaction) instead.
 
 In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
 
@@ -44,11 +44,11 @@ In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a s
 
 ***
 
-### balanceUnsealedTransaction()
+### balanceUnboundTransaction()
 
-> **balanceUnsealedTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
+> **balanceUnboundTransaction**(`tx`): `Promise`\<\{ `tx`: `string`; \}\>
 
-Take unsealed transaction (with proofs, with no signatures and with preimage
+Take unbound transaction (with proofs, with no signatures and with preimage
 data for cryptographic binding), pay fees, add necessary inputs and outputs
 to remove imbalances from it, returning a transaction ready for submission
 
@@ -300,7 +300,7 @@ Sign provided data using key and format specified in the options, data to sign w
 
 Submit a transaction to the network, effectively using wallet as a relayer.
 
-The transaction received is expected to be balanced and "sealed" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from `@midnight-ntwrk/ledger`)
+The transaction received is expected to be balanced and "finalized" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from ledger library)
 
 #### Parameters
 
