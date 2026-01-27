@@ -30,7 +30,7 @@ returning a transaction ready for submission
 This method is mainly expected to be used by DApps when they operate on transactions created by the wallet or when the DApp wants to be sure that wallet performs balancing in a separate intent.
 In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use [balanceUnboundTransaction](#balanceunboundtransaction) instead.
 
-In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
+In relation to Ledger API, this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
 
 #### Parameters
 
@@ -54,7 +54,7 @@ to remove imbalances from it, returning a transaction ready for submission
 
 This method is expected to be used by DApps when interacting with contracts - in many cases when contracts interact with native tokens, where wallet may need to add inputs and outputs to an existing intent to properly balance the transaction.
 
-In relation to Ledger API (`@midnight-ntwrk/ledger-v6`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
+In relation to Ledger API, this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
 
 #### Parameters
 
