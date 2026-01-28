@@ -1,6 +1,6 @@
 {
   "name": "@midnight-ntwrk/dapp-connector-api",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0",
   "packageManager": "yarn@4.12.0",
   "description": "Midnight DApp Connector API",
   "types": "dist/index.d.ts",
