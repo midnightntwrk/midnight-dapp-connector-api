@@ -10,14 +10,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { InitialAPI } from './api';
+import type { InitialAPI } from './api.js';
+
+export type MidnightObject =
+  | {
+      [key: string]: InitialAPI;
+    }
+  | undefined;
 
 declare global {
+  var midnight: MidnightObject;
   interface Window {
-    midnight?: {
-      [key: string]: InitialAPI;
-    };
+    midnight?: MidnightObject;
   }
 }
-
-export {};
