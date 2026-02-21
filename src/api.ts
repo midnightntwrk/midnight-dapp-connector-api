@@ -10,15 +10,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { type NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
 /**
  * Initial API for a wallet providing a DApp Connector API - it contains the information and methods allowing DApp to
  * chose and initiate a connection to the wallet.
  * Wallets inject their Initial API under the `window.midnight` object.
  * A single wallet can inject multiple instances of the Initial API, e.g. when supporting multiple versions.
+ * Together with UUID under which the initial API is installed, the contents are compatible with the [draft of CAIP-372](https://github.com/ChainAgnostic/CAIPs/pull/372/files).
  */
 export type InitialAPI = {
+  /**
+   * Wallet identifier, in a reverse DNS notation (e.g. `com.example.wallet`).
+   * Wallets should keep this identifier stable throughout the lifecycle of the product.
+   * DApps can use this property to identify the wallet, but should be prepared to handle
+   * values that are unknown, invalid, or potentially misleading, similar to handling user agent strings in web browsers.
+   */
+  rdns: string;
   /**
    * Wallet name, expected to be displayed to the user.
    * As such, DApps need to sanitize the name to prevent XSS when displaying it to the user. An example
@@ -38,9 +45,9 @@ export type InitialAPI = {
    */
   apiVersion: string;
   /**
-   * Connect to wallet, hinting desired network id
+   * Connect to wallet, hinting desired network id; Use 'mainnet' for mainnet.
    */
-  connect: (networkId: string | NetworkId) => Promise<ConnectedAPI>;
+  connect: (networkId: string) => Promise<ConnectedAPI>;
 };
 
 /**
@@ -105,9 +112,11 @@ export type WalletConnectedAPI = {
    *
    * This method is expected to be used by DApps when interacting with contracts - in many cases when contracts interact with native tokens, where wallet may need to add inputs and outputs to an existing intent to properly balance the transaction.
    *
-   * In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a serialized transaction of type `Transaction<SignatureErased, Proof, PreBinding>`
+   * In relation to Ledger API (`@midnight-ntwrk/ledger-v<N>`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, PreBinding>`
+   * Options:
+   * `payFees` - whether wallet should pay fees for the issued transaction or not, true by default
    */
-  balanceUnsealedTransaction(tx: string): Promise<{ tx: string }>;
+  balanceUnsealedTransaction(tx: string, options?: { payFees?: boolean }): Promise<{ tx: string }>;
   /**
    * Take sealed transaction (with proofs, signatures and cryptographically bound),
    * pay fees, add necessary inputs and outputs to remove imbalances from it,
@@ -116,13 +125,21 @@ export type WalletConnectedAPI = {
    * This method is mainly expected to be used by DApps when they operate on transactions created by the wallet or when the DApp wants to be sure that wallet performs balancing in a separate intent.
    * In such case, it is important to remember that some contracts might make use of fallible sections, in which case wallet won't be able to properly balance the transaction. In such cases, the DApp should use {@link balanceUnsealedTransaction} instead.
    *
-   * In relation to Ledger API (`@midnight-ntwrk/ledger`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
+   * In relation to Ledger API (`@midnight-ntwrk/ledger-v<N>`), this method expects a serialized transaction of type `Transaction<SignatureEnabled, Proof, Binding>`
+   * Options:
+   * `payFees` - whether wallet should pay fees for the issued transaction or not, true by default
    */
-  balanceSealedTransaction(tx: string): Promise<{ tx: string }>;
+  balanceSealedTransaction(tx: string, options?: { payFees?: boolean }): Promise<{ tx: string }>;
   /**
    * Initialize a transfer transaction with desired outputs
+   *
+   * Options:
+   * `payFees` - whether wallet should pay fees for the issued transaction or not, true by default
    */
-  makeTransfer(desiredOutputs: DesiredOutput[]): Promise<{ tx: string }>;
+  makeTransfer(
+    desiredOutputs: DesiredOutput[],
+    options?: { payFees?: boolean },
+  ): Promise<{ tx: string }>;
   /**
    * Initialize a transaction with unbalanced intent containing desired inputs and outputs.
    * Primary use-case for this method is to create a transaction, which inits a swap
@@ -151,6 +168,16 @@ export type WalletConnectedAPI = {
    * The transaction received is expected to be balanced and "sealed" - it means it contains proofs, signatures and cryptographically bound (`Transaction<SignatureEnabled, Proof, Binding>` type from `@midnight-ntwrk/ledger`)
    */
   submitTransaction(tx: string): Promise<void>;
+
+  /**
+   * Obtain the proving provider from the wallet to delegate proving to the wallet.
+   *
+   * @param keyMaterialProvider - object resolving prover and verifier keys, as well as the ZKIR representation of the circuit; `KeyMaterialProvider` is almost identical to the one in Midnight.js's `ZKConfigProvider` (https://github.com/midnightntwrk/midnight-js/blob/main/packages/types/src/zk-config-provider.ts#L25)
+   *
+   * @returns A `ProvingProvider` instance, compatible with Ledger's ProvingProvider (https://github.com/midnightntwrk/midnight-ledger/blob/main/ledger-wasm/ledger-v6.template.d.ts#L992)
+   */
+  getProvingProvider(keyMaterialProvider: KeyMaterialProvider): Promise<ProvingProvider>;
+
   /**
    * Get the configuration of the services used by the wallet.
    *
@@ -170,7 +197,7 @@ export type HintUsage = {
    * Hint usage of methods to the wallet.
    *
    * DApps should use this method to hint to the wallet what methods are expected to be used
-   * in a certain context (be it whole session, single view, or a user flow - it is up to DApp).
+   * in a certain context (be it a whole session, single view, or a user flow - it is up to DApp).
    * The wallet can use these calls as an opportunity to ask user for permissions and in such case - resolve the promise only after the user has granted the permissions.
    */
   hintUsage(methodNames: Array<keyof WalletConnectedAPI>): Promise<void>;
@@ -181,13 +208,16 @@ export type Configuration = {
   indexerUri: string;
   /**  Indexer WebSocket URI */
   indexerWsUri: string;
-  /**  Prover Server URI */
-  proverServerUri: string;
+  /**
+   * Prover Server URI, likely to not be present, as different proving modalities emerge
+   * @deprecated Use `getProvingProvider` instead
+   */
+  proverServerUri?: string | undefined;
   /**  Substrate URI */
   substrateNodeUri: string;
 
   /** Network id connected to - present here mostly for completness and to allow dapp validate it is connected to the network it wishes to */
-  networkId: string | NetworkId;
+  networkId: string;
 };
 
 /**
@@ -300,7 +330,7 @@ export type ConnectionStatus =
        * Connection is established to following network id
        */
       status: 'connected';
-      networkId: string | NetworkId;
+      networkId: string;
     }
   | {
       /**
@@ -308,3 +338,28 @@ export type ConnectionStatus =
        */
       status: 'disconnected';
     };
+
+/**
+ * Object resolving prover and verifier keys, as well as the ZKIR representation of the circuit.
+ * It is almost identical to the one in Midnight.js's `ZKConfigProvider` (https://github.com/midnightntwrk/midnight-js/blob/main/packages/types/src/zk-config-provider.ts#L25)
+ *
+ * It has separate methods for getting the ZKIR, prover key and verifier key to allow for caching of the keys and to avoid loading the prover key into memory when it is not needed.
+ */
+export type KeyMaterialProvider = {
+  getZKIR(circuitKeyLocation: string): Promise<Uint8Array>;
+  getProverKey(circuitKeyLocation: string): Promise<Uint8Array>;
+  getVerifierKey(circuitKeyLocation: string): Promise<Uint8Array>;
+};
+
+/**
+ * Object abstracting the proving functionality
+ * It is compatible with Ledger's ProvingProvider (https://github.com/midnightntwrk/midnight-ledger/blob/main/ledger-wasm/ledger-v6.template.d.ts#L992)
+ */
+export type ProvingProvider = {
+  check(serializedPreimage: Uint8Array, keyLocation: string): Promise<(bigint | undefined)[]>;
+  prove(
+    serializedPreimage: Uint8Array,
+    keyLocation: string,
+    overwriteBindingInput?: bigint,
+  ): Promise<Uint8Array>;
+};

@@ -193,7 +193,7 @@ try {
 
 
 ## Examples
-In this section, you'll find examples demonstrating how to fully utilize the DApp connector API.
+In this section, you'll find examples demonstrating how to utilize the DApp connector API.
 
 ### Connect
 
@@ -266,6 +266,29 @@ const connectedWallet = await connect();
 // The the party #2 provides the 50_000 Foo tokens and creates self outputs for the surplus of 10 Night
 const balancedTx = await connectedWallet.balanceSealedTransaction(tx);
 await connectedWallet.submitTransaction(balancedTx);
+```
+
+### Delegate proving
+
+```ts
+import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+import { Transaction } from '@midnight-ntwrk/ledger-v6';
+
+const keyMaterialProvider = new FetchZkConfigProvider('https://example.com');
+
+const connectedAPI = await connect();
+const provingProvider = connectedAPI.getProvingProvider(keyMaterialProvider);
+
+// Let's prepare the transaction and their inputs
+const costModel = await fetchCostModel(); // E.g. from Indexer, using `Block.ledgerParameters`: https://github.com/midnightntwrk/midnight-indexer/blob/main/indexer-api/graphql/schema-v3.graphql#L36
+const unprovedTx = prepareUnprovenTransaction(costModel); // E.g. make a contract call
+
+// Now the proving itself:
+const provenTx = await unprovenTx.prove(provingProvider, costModel);
+
+// Now the transaction can be e.g. balanced (to pay fees) and submitted:
+const finalTx = await connectedAPI.balancedUnsealedTransaction(provenTx);
+await connectedAPI.submitTransaction(finalTx);
 ```
 
 ### LICENSE
