@@ -11,7 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import './globals';
+// Re-export globals to ensure they're included in type resolution
+export * from './globals.js';
 
 export type {
   InitialAPI,
@@ -30,7 +31,7 @@ export type {
   ConnectionStatus,
   KeyMaterialProvider,
   ProvingProvider,
-} from './api';
+} from './api.js';
 
-export { ErrorCodes } from './errors';
-export type { ErrorCode, APIError } from './errors';
+export { ErrorCodes } from './errors.js';
+export type { ErrorCode, APIError } from './errors.js';

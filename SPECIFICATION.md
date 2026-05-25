@@ -406,9 +406,11 @@ const ErrorCodes = {
   /** Can be thrown in various circumstances, e.g. one being a malformed transaction */
   InvalidRequest: 'InvalidRequest',
   /** Permission to perform action was rejected. */
-  PermissionRejected: 'PermissionRejected'
+  PermissionRejected: 'PermissionRejected',
   /** The connection to the wallet was lost */
-  Disconnected: 'Disconnected'
+  Disconnected: 'Disconnected',
+  /** Wallet lacks sufficient balance to complete the requested transaction */
+  InsufficientFunds: 'InsufficientFunds'
 } as const;
 
 type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
@@ -425,6 +427,8 @@ type APIError = Error & {
 
 Codes `InternalError` and `InvalidRequest` are rather simple in interpretation, along the lines of guidelines behind usage of 4xx and 5xx error codes in HTTP.
 There is a notable difference in semantics between `Rejected` and `PermissionRejected` codes: `Rejected` indicates one-time rejection (e.g. user rejecting a transaction after seeing the real cost of it), while `PermissionRejected` indicates general preference to not permit particular action. Because of this - the connected DApp can expect, that once `PermissionRejected` is observed for a particular part of the API, it will keep being returned for the session (that is - until the browser window/tab with the DApp page is closed).
+
+The `InsufficientFunds` code is distinct from `InvalidRequest` - it indicates that the request is well-formed and valid, but cannot be fulfilled because the wallet lacks sufficient balance. This allows DApps to provide clear feedback to users (e.g., "insufficient balance") rather than a generic error. Common scenarios include: lacking tokens to provide as inputs, lacking tokens to create requested outputs, or lacking dust to pay transaction fees.
 
 `APIError` type is not modelled as a class here, because it would be impossible to share single class definition between the DApp and the Wallet and in result - `instanceof` checks would not work as expected. Wallets can implement the type as a class extending native `Error`.
 
