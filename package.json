@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-ntwrk/dapp-connector-api",
+  "name": "@midnightntwrk/dapp-connector-api",
   "version": "4.0.1",
   "packageManager": "yarn@4.17.0",
   "description": "Midnight DApp Connector API",
@@ -20,21 +20,24 @@
     "package.json"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/midnight-ntwrk/artifacts.git"
+    "url": "git+https://github.com/midnightntwrk/midnight-dapp-connector-api.git"
   },
   "scripts": {
-    "prepack": "yarn build",
-    "deploy": "yarn npm publish",
     "build": "rm -rf ./dist && rollup -c ./rollup.config.mjs",
     "lint": "eslint src",
     "format": "prettier --write '**/*.{md}'",
-    "build:docs": "typedoc --validation --plugin typedoc-plugin-markdown --options typedoc.json"
+    "build:docs": "typedoc --validation --plugin typedoc-plugin-markdown --options typedoc.json",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && yarn install --mode=update-lockfile",
+    "changeset:check": "changeset status --verbose"
   },
   "devDependencies": {
+    "@changesets/cli": "2.31.0",
     "@eslint/js": "^10.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
