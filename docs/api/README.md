@@ -1,4 +1,4 @@
-**@midnightntwrk/dapp-connector-api v4.1.0**
+**@midnightntwrk/dapp-connector-api v4.0.1**
 
 ***
 
