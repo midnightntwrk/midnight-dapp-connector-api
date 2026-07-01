@@ -1,7 +1,6 @@
 {
   "extends": "@tsconfig/node24/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist",
     "module": "ESNext",
     "strict": true,
