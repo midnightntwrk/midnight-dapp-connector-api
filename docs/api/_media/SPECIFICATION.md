@@ -7,7 +7,7 @@ What raises additional concern to this API is potential presence of multiple bro
 ## API Design
 
 > [!note]
-> Code snippets below are defined in TypeScript, this enables easy consistency check between the specification here, and definition in the DApp Connector API package: https://github.com/input-output-hk/midnight-dapp-connector-api / https://www.npmjs.com/package/@midnight-ntwrk/dapp-connector-api
+> Code snippets below are defined in TypeScript, this enables easy consistency check between the specification here, and definition in the DApp Connector API package: https://github.com/input-output-hk/midnight-dapp-connector-api / https://www.npmjs.com/package/@midnightntwrk/dapp-connector-api
 
 > [!note] 
 > In certain ways, the design of this API borrows from the [Cardano DApp Connector API defined in CIP-30](https://cips.cardano.org/cip/CIP-0030). This is a deliberate decision, to make the API look familiar to Cardano DApp developers.
@@ -31,7 +31,7 @@ type InitialAPI = {
    */
   icon: string;
   /**
-   * Version of the API implemented and installed, string containing a version of the API package @midnight-ntwrk/dapp-connector-api that was used in implementation
+   * Version of the API implemented and installed, string containing a version of the API package @midnightntwrk/dapp-connector-api that was used in implementation
    */
   apiVersion: string;
   /**
@@ -64,7 +64,7 @@ Here, some responsibilities lie on both DApp and Wallet:
 8. Wallet should keep stable `rdns` throught lifecycle of the product.
 9. DApp must be prepared to handle `rdns` values that are unknown, invalid, or potentially misleading, similar to handling user agent strings in web browsers.
 10. DApp should verify initial API instances provided against possible malicious extensions (like multiple APIs with same or very similar `rdns` and/or `name` and overlapping `apiVersion`s). When DApp detects such situation it must notify the user.
-11. The Wallet must report exact version of the `@midnight-ntwrk/dapp-connector-api` package it implemented
+11. The Wallet must report exact version of the `@midnightntwrk/dapp-connector-api` package it implemented
 12. If the Wallet implements multiple incompatible versions of the API simultanously (which is a possible case during transition period related to a hard-fork), Wallet must provide multiple entries in the `midnight` object.
 13. For connecting:
    - The DApp must provide network id it wants to connect to; The network id of mainnet is `mainnet`

@@ -1,7 +1,7 @@
 {
-  "name": "@midnight-ntwrk/dapp-connector-api",
+  "name": "@midnightntwrk/dapp-connector-api",
   "version": "4.1.0",
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.17.0",
   "description": "Midnight DApp Connector API",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
@@ -20,26 +20,29 @@
     "package.json"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/midnight-ntwrk/artifacts.git"
+    "url": "git+https://github.com/midnightntwrk/midnight-dapp-connector-api.git"
   },
   "scripts": {
-    "prepack": "yarn build",
-    "deploy": "yarn npm publish",
     "build": "rm -rf ./dist && rollup -c ./rollup.config.mjs",
     "lint": "eslint src",
     "format": "prettier --write '**/*.{md}'",
-    "build:docs": "typedoc --validation --plugin typedoc-plugin-markdown --options typedoc.json"
+    "build:docs": "typedoc --validation --plugin typedoc-plugin-markdown --options typedoc.json",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && yarn install --mode=update-lockfile",
+    "changeset:check": "changeset status --verbose"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@changesets/cli": "2.31.0",
+    "@eslint/js": "^10.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@tsconfig/node22": "^22.0.0",
+    "@tsconfig/node24": "^24.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.1",
@@ -48,7 +51,7 @@
     "tslib": "^2.8.1",
     "typedoc": "^0.28.0",
     "typedoc-plugin-markdown": "^4.4.1",
-    "typescript": "^5.7.3",
+    "typescript": "^6.0.0",
     "typescript-eslint": "^8.20.0"
   }
 }

@@ -1,8 +1,8 @@
-[**@midnight-ntwrk/dapp-connector-api v4.1.0**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0**](../README.md)
 
 ***
 
-[@midnight-ntwrk/dapp-connector-api](../globals.md) / InitialAPI
+[@midnightntwrk/dapp-connector-api](../globals.md) / InitialAPI
 
 # Type Alias: InitialAPI
 
@@ -20,7 +20,7 @@ Together with UUID under which the initial API is installed, the contents are co
 
 > **apiVersion**: `string`
 
-Version of the API implemented by this instance of the API, string containing a version of the API package @midnight-ntwrk/dapp-connector-api that was used in implementation
+Version of the API implemented by this instance of the API, string containing a version of the API package @midnightntwrk/dapp-connector-api that was used in implementation
 E.g. wallet implementing version 3.1.5 provides apiVersion with value '3.1.5'
 This value lets DApps to differentiate between different versions of the API and implement appropriate logic for each version or not use some versions at all
 

@@ -8,13 +8,6 @@
     "semanticCommits": "enabled",
     "rebaseWhen": "conflicted",
     "enabled": true,
-    "hostRules": [
-      {
-        "hostType": "npm",
-        "matchHost": "https://npm.pkg.github.com/",
-        "npmrc": "@midnight-ntwrk:registry=https://npm.pkg.github.com/"
-      }
-    ],
     "packageRules": [
       {
         "matchManagers": ["npm"],
@@ -30,7 +23,7 @@
       {
         "groupName": "Midnight libraries",
         "matchPackageNames": [
-          "@midnight-ntwrk/**"
+          "@midnightntwrk/**"
         ]
       },
       {

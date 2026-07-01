@@ -1,8 +1,8 @@
-[**@midnight-ntwrk/dapp-connector-api v4.1.0**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0**](../README.md)
 
 ***
 
-[@midnight-ntwrk/dapp-connector-api](../globals.md) / DesiredInput
+[@midnightntwrk/dapp-connector-api](../globals.md) / DesiredInput
 
 # Type Alias: DesiredInput
 

@@ -7,9 +7,9 @@ The [Specification](./SPECIFICATION.md) document describes in more detail expect
 
 ## Installation
 
-The Midnight DApp connector API is available as an NPM package with the namespace `@midnight-ntwrk/dapp-connector-api`. It can be installed using any node package manager, such as Yarn. To install the package using Yarn, execute the following command:
+The Midnight DApp connector API is available as an NPM package with the namespace `@midnightntwrk/dapp-connector-api`. It can be installed using any node package manager, such as Yarn. To install the package using Yarn, execute the following command:
 
-`yarn add @midnight-ntwrk/dapp-connector-api`
+`yarn add @midnightntwrk/dapp-connector-api`
 
 ## Package usage
 
