@@ -27,3 +27,11 @@ jobs:
 
       - name: Run build
         run: yarn build
+
+      - name: Audit dependencies for known vulnerabilities
+        # Gates CI on npm advisories at severity >= high.
+        # `--recursive` includes transitive dependencies.
+        # If a finding here is acceptable (e.g. upstream patch pending),
+        # add `--exclude <package>` for the specific package with a comment
+        # explaining why, rather than lowering the severity threshold.
+        run: yarn npm audit --severity high --recursive
