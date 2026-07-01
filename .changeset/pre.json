@@ -4,5 +4,8 @@
   "initialVersions": {
     "@midnightntwrk/dapp-connector-api": "4.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "dapp-connector-api-org-rename",
+    "signdata-ecdsa-scheme"
+  ]
 }
