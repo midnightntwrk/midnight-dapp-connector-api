@@ -31,6 +31,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      # BASE_REF is passed via env (not interpolated into the script) so an
+      # attacker-crafted base branch name can't inject shell.
       - name: Verify that a changeset exists
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          yarn changeset status --since=origin/${{ github.base_ref }} --verbose
+          yarn changeset status --since="origin/$BASE_REF" --verbose

@@ -1,12 +1,11 @@
 name: CD
 
-# MIDNIGHT_GH_TOKEN is the CI bot PAT, used here only for GitHub API/push work
-# (creating the release PR so it triggers CI, and pushing release tags/Releases).
-# This repo has no @midnight-ntwrk deps, so no GitHub Packages registry auth is
-# needed for install.
-env:
-  MIDNIGHT_GH_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
-  MIDNIGHTCI_GPG_PRIVATE_KEY: ${{ secrets.MIDNIGHTCI_GPG_PRIVATE_KEY }}
+# Secrets are scoped to the individual steps that need them (never workflow-level
+# env), and github context values are passed through step env vars rather than
+# interpolated into run: scripts. MIDNIGHTCI_PACKAGES_WRITE is the CI bot PAT,
+# used only for GitHub API/push work (opening the release PR so it triggers CI,
+# and pushing release tags/Releases) — this repo has no @midnight-ntwrk deps, so
+# no GitHub Packages registry auth is needed for install.
 
 on:
   push:
@@ -54,7 +53,7 @@ jobs:
         id: gpg
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         with:
-          gpg_private_key: ${{ env.MIDNIGHTCI_GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.MIDNIGHTCI_GPG_PRIVATE_KEY }}
           git_user_signingkey: true
           git_commit_gpgsign: true
 
@@ -101,18 +100,21 @@ jobs:
           # No `publish` here — publishing is the gated publish-stable job.
           setupGitUser: false
         env:
-          GITHUB_TOKEN: ${{ env.MIDNIGHT_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
 
       # Collapse the two signals into one mutually-exclusive mode. hasChangesets
       # == 'false' wins as 'stable': when the release PR merges there are no
       # changesets left, so hasReleases is 'false' too and there is no ambiguity.
       - name: Resolve publish mode
         id: mode
+        env:
+          HAS_CHANGESETS: ${{ steps.changesets.outputs.hasChangesets }}
+          HAS_RELEASES: ${{ steps.releases.outputs.hasReleases }}
         run: |
           set -euo pipefail
-          if [ "${{ steps.changesets.outputs.hasChangesets }}" = "false" ]; then
+          if [ "$HAS_CHANGESETS" = "false" ]; then
             MODE=stable
-          elif [ "${{ steps.releases.outputs.hasReleases }}" = "true" ]; then
+          elif [ "$HAS_RELEASES" = "true" ]; then
             MODE=canary
           else
             MODE=none
@@ -142,7 +144,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          token: ${{ env.MIDNIGHT_GH_TOKEN }} # so the release-tag push is authenticated
+          token: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }} # so the release-tag push is authenticated
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -159,7 +161,7 @@ jobs:
         id: gpg
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         with:
-          gpg_private_key: ${{ env.MIDNIGHTCI_GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.MIDNIGHTCI_GPG_PRIVATE_KEY }}
           git_user_signingkey: true
           git_commit_gpgsign: true
 
@@ -189,7 +191,7 @@ jobs:
           publish: yarn changeset publish
           setupGitUser: false
         env:
-          GITHUB_TOKEN: ${{ env.MIDNIGHT_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
           NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_NPMJS_TOKEN }}
 
       # Mirror the transitional @midnight-ntwrk alias (dashed scope). The canonical
@@ -237,9 +239,12 @@ jobs:
       # Phase A: token auth via NODE_AUTH_TOKEN (in the setup-node .npmrc).
       # Phase B (trusted publishing): remove NODE_AUTH_TOKEN, add
       #   NPM_CONFIG_PROVENANCE: 'true'.
+      # REF_NAME is passed via env (not interpolated into the script) so an
+      # attacker-crafted branch name can't inject shell.
       - name: Snapshot version + publish canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_NPMJS_TOKEN }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
 
@@ -261,10 +266,10 @@ jobs:
 
           # Publish under a branch-specific dist-tag: "canary" on main,
           # "canary-<branch>" elsewhere.
-          if [ "${{ github.ref_name }}" = "main" ]; then
+          if [ "$REF_NAME" = "main" ]; then
             CANARY_TAG="canary"
           else
-            CANARY_TAG="canary-${{ github.ref_name }}"
+            CANARY_TAG="canary-$REF_NAME"
           fi
 
           # Canonical @midnightntwrk scope. --no-git-tag so canary snapshots leave
