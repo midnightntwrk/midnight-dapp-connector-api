@@ -1,8 +1,8 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
 
 ***
 
-[@midnight-ntwrk/dapp-connector-api](../globals.md) / WalletConnectedAPI
+[@midnightntwrk/dapp-connector-api](../globals.md) / WalletConnectedAPI
 
 # Type Alias: WalletConnectedAPI
 
