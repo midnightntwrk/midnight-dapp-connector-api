@@ -1,8 +1,8 @@
-[**@midnight-ntwrk/dapp-connector-api v4.0.1**](README.md)
+[**@midnight-ntwrk/dapp-connector-api v4.1.0**](README.md)
 
 ***
 
-# @midnight-ntwrk/dapp-connector-api v4.0.1
+# @midnight-ntwrk/dapp-connector-api v4.1.0
 
 ## Type Aliases
 

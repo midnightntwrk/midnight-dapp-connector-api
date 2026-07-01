@@ -267,10 +267,24 @@ type SignDataOptions = {
 };
 type Signature = {
   /**
+   * The signature scheme used to produce the signature.
+   * Optional for backward compatibility - when omitted, `schnorr_bip340` is assumed.
+   * A future major version of the API will make this field mandatory.
+   */
+  scheme?: "ecdsa_secp256k1_sha256" | "schnorr_bip340";
+  /**
    * The data signed
    */
   data: string; 
+  /**
+   * The signature - concatenation of the big-endian byte encodings of the scalars `r` and `s`,
+   * each padded to 32 bytes (64 bytes total, for either scheme)
+   */
   signature: string; 
+  /**
+   * The verifying (public) key. Format depends on `scheme`:
+   * 32 bytes for `schnorr_bip340` (BIP-340 x-only), 33 bytes for `ecdsa_secp256k1_sha256` (SEC1 compressed)
+   */
   verifyingKey: string
 }
 
@@ -357,6 +371,14 @@ All of the methods which create or complement a transaction (`makeTransfer`, `ma
 #### Signing
 
 In order to make it impossible to sign transactions by accident, wallet receiving call to `signData` must prefix data with string `midnight_signed_message:<data_size>:`, where `<data_size>` is data size in bytes.
+
+Midnight supports two signature schemes, identified by the `scheme` field of the returned `Signature`:
+- `schnorr_bip340` - Schnorr signatures as defined by [BIP-340](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki), with a 32-byte x-only verifying key
+- `ecdsa_secp256k1_sha256` - ECDSA over the secp256k1 curve using SHA-256, with a 33-byte SEC1 compressed verifying key. Support for ECDSA is motivated by the availability of MPC and HSM implementations, allowing authorisation of actions by parties relying on those.
+
+In both schemes the signature itself is 64 bytes - the concatenation of the big-endian byte encodings of the scalars `r` and `s`, each padded to 32 bytes.
+
+The `scheme` field is optional for backward compatibility: when it is absent, the wallet and the DApp must treat the signature as `schnorr_bip340`, which is the default. A future major version of the API will make the `scheme` field mandatory. DApps relying on `signData` must be aware of both schemes and handle the `scheme` discriminator accordingly.
 
 #### Proving
 
