@@ -21,11 +21,10 @@ type MidnightConnectors = {
 };
 
 declare global {
-  // Browser environment
-  interface Window {
-    midnight?: MidnightConnectors;
-  }
-
-  // Node.js/test environment (globalThis)
+  // A single global declaration covers every access pattern: the global `window`
+  // is typed `Window & typeof globalThis`, so `window.midnight` resolves through
+  // the `globalThis` side — as do `globalThis.midnight` and the bare `midnight`
+  // (browser, Node, and test environments alike). A separate `Window` interface
+  // augmentation would be redundant.
   var midnight: MidnightConnectors | undefined;
 }
