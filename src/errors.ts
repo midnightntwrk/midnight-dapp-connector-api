@@ -24,6 +24,12 @@ export const ErrorCodes = {
   PermissionRejected: 'PermissionRejected',
   /** The connection to the wallet was lost */
   Disconnected: 'Disconnected',
+  /**
+   * Wallet lacks sufficient balance to complete the requested transaction.
+   * This is distinct from InvalidRequest - the request is well-formed but
+   * cannot be fulfilled due to insufficient funds in the wallet.
+   */
+  InsufficientFunds: 'InsufficientFunds',
 } as const;
 
 /**

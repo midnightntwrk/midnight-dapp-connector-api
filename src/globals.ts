@@ -10,12 +10,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import type { InitialAPI } from './api';
+import type { InitialAPI } from './api.js';
+
+/**
+ * Type for the midnight object that holds wallet connector instances.
+ * Each wallet registers itself under a unique UUID key.
+ */
+type MidnightConnectors = {
+  [key: string]: InitialAPI;
+};
 
 declare global {
-  interface Window {
-    midnight?: {
-      [key: string]: InitialAPI;
-    };
-  }
+  // A single global declaration covers every access pattern: the global `window`
+  // is typed `Window & typeof globalThis`, so `window.midnight` resolves through
+  // the `globalThis` side — as do `globalThis.midnight` and the bare `midnight`
+  // (browser, Node, and test environments alike). A separate `Window` interface
+  // augmentation would be redundant.
+  var midnight: MidnightConnectors | undefined;
 }
