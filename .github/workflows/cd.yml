@@ -93,7 +93,7 @@ jobs:
 
       - name: Create / update Release Pull Request
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        uses: changesets/action@198f833dd7d863100ea6e28967bc9a9fdefadb0a # v2.1.0
         with:
           title: 'chore: release'
           version: yarn changeset:version
@@ -186,7 +186,7 @@ jobs:
       # Phase B (trusted publishing): remove NODE_AUTH_TOKEN, add
       #   NPM_CONFIG_PROVENANCE: 'true' (auth then comes from id-token/OIDC).
       - name: Publish @midnightntwrk + GitHub Releases
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        uses: changesets/action@198f833dd7d863100ea6e28967bc9a9fdefadb0a # v2.1.0
         with:
           publish: yarn changeset publish
           setupGitUser: false
