@@ -7,6 +7,7 @@
   "changesets": [
     "dapp-connector-api-org-rename",
     "fix-dist-src-leak",
-    "signdata-ecdsa-scheme"
+    "signdata-ecdsa-scheme",
+    "tangy-goats-cry"
   ]
 }
