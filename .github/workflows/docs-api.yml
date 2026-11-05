@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Node Environment
-        uses: ./.github/workflows/setup-env
+        uses: $/.github/workflows/setup-env
 
       - name: Generate documentation
         run: yarn build:docs

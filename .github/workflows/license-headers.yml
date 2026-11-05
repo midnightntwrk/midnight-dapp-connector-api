@@ -17,6 +17,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
             - name: Check License Headers
               uses: apache/skywalking-eyes/header@de402d804643951e752b645b6e562c188470f68a # main
@@ -32,7 +34,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  persist-credentials: false
 
             - name: Fix License Headers
               uses: apache/skywalking-eyes/header@de402d804643951e752b645b6e562c188470f68a # main

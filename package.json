@@ -1,7 +1,7 @@
 {
   "name": "@midnightntwrk/dapp-connector-api",
   "version": "4.1.0",
-  "packageManager": "yarn@4.17.0",
+  "packageManager": "yarn@4.18.1",
   "description": "Midnight DApp Connector API",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
@@ -46,7 +46,7 @@
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@tsconfig/node24": "^24.0.0",
-    "eslint": "^9.18.0",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.4.2",
@@ -56,5 +56,10 @@
     "typedoc-plugin-markdown": "^4.4.1",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.20.0"
+  },
+  "resolutions": {
+    "minimatch@npm:^10.2.2": "^11.0.1",
+    "minimatch@npm:^10.2.4": "^11.0.1",
+    "minimatch@npm:^10.2.5": "^11.0.1"
   }
 }
