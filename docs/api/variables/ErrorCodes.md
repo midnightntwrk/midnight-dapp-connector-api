@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -17,6 +17,14 @@ All possible error codes gathered in a single object.
 > `readonly` **Disconnected**: `"Disconnected"` = `'Disconnected'`
 
 The connection to the wallet was lost
+
+### InsufficientFunds
+
+> `readonly` **InsufficientFunds**: `"InsufficientFunds"` = `'InsufficientFunds'`
+
+Wallet lacks sufficient balance to complete the requested transaction.
+This is distinct from InvalidRequest - the request is well-formed but
+cannot be fulfilled due to insufficient funds in the wallet.
 
 ### InternalError
 
