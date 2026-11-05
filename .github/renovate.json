@@ -34,6 +34,12 @@
       {
         "groupName": "eslint packages",
         "matchPackageNames": ["eslint**"]
+      },
+      {
+        "description": "changesets/action v2 only runs with @changesets/cli v3, and cd.yml uses v1 inputs; migrate both majors together by hand",
+        "matchPackageNames": ["changesets/action", "@changesets/cli"],
+        "matchUpdateTypes": ["major"],
+        "enabled": false
       }
     ]
   }
