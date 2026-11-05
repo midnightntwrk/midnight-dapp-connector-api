@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -24,7 +24,7 @@ The wallet can use these calls as an opportunity to ask user for permissions and
 
 ##### methodNames
 
-keyof [`WalletConnectedAPI`](WalletConnectedAPI.md)[]
+(keyof [`WalletConnectedAPI`](WalletConnectedAPI.md))[]
 
 #### Returns
 

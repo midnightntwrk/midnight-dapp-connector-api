@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -22,7 +22,7 @@ The data signed
 
 ### scheme?
 
-> `optional` **scheme**: `"ecdsa_secp256k1_sha256"` \| `"schnorr_bip340"`
+> `optional` **scheme?**: `"ecdsa_secp256k1_sha256"` \| `"schnorr_bip340"`
 
 The signature scheme used to produce the signature.
 

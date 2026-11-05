@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -26,7 +26,7 @@ This value lets DApps to differentiate between different versions of the API and
 
 ***
 
-### connect()
+### connect
 
 > **connect**: (`networkId`) => `Promise`\<[`ConnectedAPI`](ConnectedAPI.md)\>
 

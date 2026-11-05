@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -36,7 +36,7 @@ Network id connected to - present here mostly for completness and to allow dapp 
 
 ### ~~proverServerUri?~~
 
-> `optional` **proverServerUri**: `string`
+> `optional` **proverServerUri?**: `string`
 
 Prover Server URI, likely to not be present, as different proving modalities emerge
 
