@@ -36,7 +36,10 @@ jobs:
       cancel-in-progress: false
 
     steps:
+      # changesets/action authenticates its own pushes via ~/.netrc with GITHUB_TOKEN.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # No registry-url/scope here: this job only opens the release PR, it never
       # runs `npm publish` (those are set on the publish-stable/canary jobs).
@@ -58,10 +61,12 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Configure GIT signing
+        env:
+          GPG_FINGERPRINT: ${{ steps.gpg.outputs.fingerprint }}
         run: |
           git config user.name  "MidnightCI"
           git config user.email "midnight-automation+midnightci@iohk.io"
-          git config user.signingkey "${{ steps.gpg.outputs.fingerprint }}"
+          git config user.signingkey "$GPG_FINGERPRINT"
           git config commit.gpgsign true
           git config tag.gpgSign true
 
@@ -148,9 +153,10 @@ jobs:
       cancel-in-progress: false
 
     steps:
+      # Release tags are pushed by changesets/action via ~/.netrc with GITHUB_TOKEN.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          token: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }} # so the release-tag push is authenticated
+          persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -172,10 +178,12 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Configure GIT signing
+        env:
+          GPG_FINGERPRINT: ${{ steps.gpg.outputs.fingerprint }}
         run: |
           git config user.name  "MidnightCI"
           git config user.email "midnight-automation+midnightci@iohk.io"
-          git config user.signingkey "${{ steps.gpg.outputs.fingerprint }}"
+          git config user.signingkey "$GPG_FINGERPRINT"
           git config commit.gpgsign true
           git config tag.gpgSign true
 
@@ -227,6 +235,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
