@@ -93,9 +93,15 @@ jobs:
 
       - name: Create / update Release Pull Request
         id: changesets
-        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           title: 'chore: release'
+          # Signed off for the required DCO check. In pre mode v1 appends
+          # " (<tag>)" to this message, which breaks the trailer.
+          commit: |-
+            chore: release
+
+            Signed-off-by: MidnightCI <midnight-automation+midnightci@iohk.io>
           version: yarn changeset:version
           # No `publish` here — publishing is the gated publish-stable job.
           setupGitUser: false
@@ -186,7 +192,7 @@ jobs:
       # Phase B (trusted publishing): remove NODE_AUTH_TOKEN, add
       #   NPM_CONFIG_PROVENANCE: 'true' (auth then comes from id-token/OIDC).
       - name: Publish @midnightntwrk + GitHub Releases
-        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           publish: yarn changeset publish
           setupGitUser: false

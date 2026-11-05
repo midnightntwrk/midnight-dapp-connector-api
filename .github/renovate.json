@@ -7,8 +7,36 @@
     "dependencyDashboard": true,
     "semanticCommits": "enabled",
     "rebaseWhen": "conflicted",
+    "minimumReleaseAge": "7 days",
     "enabled": true,
     "packageRules": [
+      {
+        "description": [
+          "Hold npm version updates for 7 days, matching midnight-wallet, even if a preset adds a shorter npm-specific age (config:best-practices sets 3 days via security:minimumReleaseAgeNpm, and a matching packageRule overrides top-level config).",
+          "matchUpdateTypes is limited to version bumps because pin, replacement, bump, lockfileUpdate, rollback and lockFileMaintenance updates have no releaseTimestamp and could never satisfy the age gate."
+        ],
+        "matchDatasources": ["npm"],
+        "matchUpdateTypes": ["major", "minor", "patch"],
+        "minimumReleaseAge": "7 days",
+        "internalChecksFilter": "strict"
+      },
+      {
+        "description": [
+          "Do not let a missing releaseTimestamp block an update type that never has one.",
+          "minimumReleaseAgeBehaviour defaults to timestamp-required, so with minimumReleaseAge set these updates, including the SHA-pinned GitHub Action digest bumps this repo relies on, would stay pending forever (renovatebot/renovate#45236)."
+        ],
+        "matchUpdateTypes": [
+          "digest",
+          "pinDigest",
+          "pin",
+          "replacement",
+          "bump",
+          "lockfileUpdate",
+          "rollback",
+          "lockFileMaintenance"
+        ],
+        "minimumReleaseAgeBehaviour": "timestamp-optional"
+      },
       {
         "matchManagers": ["npm"],
         "enabled": true
@@ -34,6 +62,12 @@
       {
         "groupName": "eslint packages",
         "matchPackageNames": ["eslint**"]
+      },
+      {
+        "description": "changesets/action v2 only runs with @changesets/cli v3, and cd.yml uses v1 inputs; migrate both majors together by hand",
+        "matchPackageNames": ["changesets/action", "@changesets/cli"],
+        "matchUpdateTypes": ["major"],
+        "enabled": false
       }
     ]
   }

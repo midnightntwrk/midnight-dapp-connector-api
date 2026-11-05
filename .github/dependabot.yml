@@ -5,7 +5,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      
+    ignore:
+      # v2 only runs with @changesets/cli v3; migrate both together by hand.
+      - dependency-name: "changesets/action"
+        update-types: ["version-update:semver-major"]
+
 #  - package-ecosystem: "cargo"
 #    directory: "/"
 #    registries: "*"
