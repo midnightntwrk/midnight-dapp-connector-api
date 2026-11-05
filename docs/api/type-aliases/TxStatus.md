@@ -1,4 +1,4 @@
-[**@midnightntwrk/dapp-connector-api v4.0.1**](../README.md)
+[**@midnightntwrk/dapp-connector-api v4.1.0-beta.1**](../README.md)
 
 ***
 
@@ -8,43 +8,57 @@
 
 > **TxStatus** = \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"finalized"`; \} \| \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"confirmed"`; \} \| \{ `status`: `"pending"`; \} \| \{ `status`: `"discarded"`; \}
 
-## Type Declaration
+## Union Members
+
+### Type Literal
 
 \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"finalized"`; \}
 
-### executionStatus
+#### executionStatus
 
 > **executionStatus**: [`ExecutionStatus`](ExecutionStatus.md)
 
-### status
+#### status
 
 > **status**: `"finalized"`
 
 Transaction included in chain and finalized
 
+***
+
+### Type Literal
+
 \{ `executionStatus`: [`ExecutionStatus`](ExecutionStatus.md); `status`: `"confirmed"`; \}
 
-### executionStatus
+#### executionStatus
 
 > **executionStatus**: [`ExecutionStatus`](ExecutionStatus.md)
 
-### status
+#### status
 
 > **status**: `"confirmed"`
 
 Transaction included in chain and not finalized yet
 
+***
+
+### Type Literal
+
 \{ `status`: `"pending"`; \}
 
-### status
+#### status
 
 > **status**: `"pending"`
 
 Transaction sent to network but is not known to be either confirmed or discarded yet
 
+***
+
+### Type Literal
+
 \{ `status`: `"discarded"`; \}
 
-### status
+#### status
 
 > **status**: `"discarded"`
 
