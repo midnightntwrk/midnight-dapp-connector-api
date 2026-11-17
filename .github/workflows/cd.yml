@@ -133,7 +133,8 @@ jobs:
           echo "Resolved publish mode: ${MODE}"
           echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
 
-  # Publishes stable packages (primary @midnightntwrk + @midnight-ntwrk alias).
+  # Publishes stable packages to @midnightntwrk only. The dashed @midnight-ntwrk
+  # scope is retired (no longer published; deprecated on npm).
   # Runs only on the push that merged the release PR (no changesets left) and is
   # gated by the npm-publish-stable environment.
   publish-stable:
@@ -205,14 +206,6 @@ jobs:
           setupGitUser: false
         env:
           GITHUB_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
-          NPM_CONFIG_PROVENANCE: 'true'
-
-      # Mirror the transitional @midnight-ntwrk alias (dashed scope). The canonical
-      # scope is already live from the step above; this only stages and publishes
-      # the alias, so it can never lead the canonical scope.
-      - name: Publish @midnight-ntwrk alias
-        run: node scripts/publish-alias.mjs
-        env:
           NPM_CONFIG_PROVENANCE: 'true'
 
   # Publishes a snapshot only when there are pending package-bumping changesets
@@ -289,9 +282,6 @@ jobs:
           # Canonical @midnightntwrk scope. --no-git-tag so canary snapshots leave
           # no git tags (and no GitHub Releases).
           yarn changeset publish --tag "$CANARY_TAG" --no-git-tag
-
-          # Dashed @midnight-ntwrk alias: mirrored afterwards from the workspace.
-          node scripts/publish-alias.mjs --tag "$CANARY_TAG"
 
       - name: Cleanup (always)
         if: always()
