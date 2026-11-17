@@ -133,7 +133,8 @@ jobs:
           echo "Resolved publish mode: ${MODE}"
           echo "mode=${MODE}" >> "$GITHUB_OUTPUT"
 
-  # Publishes stable packages (primary @midnightntwrk + @midnight-ntwrk alias).
+  # Publishes stable packages to @midnightntwrk only. The dashed @midnight-ntwrk
+  # scope is retired (no longer published; deprecated on npm).
   # Runs only on the push that merged the release PR (no changesets left) and is
   # gated by the npm-publish-stable environment.
   publish-stable:
@@ -147,7 +148,7 @@ jobs:
     environment: npm-publish-stable
     permissions:
       contents: write # push release git tags
-      id-token: write # for npm Trusted Publishing (Phase B); harmless while token-based
+      id-token: write # npm Trusted Publishing (OIDC) + provenance
     concurrency:
       group: publish-stable-${{ github.ref_name }}
       cancel-in-progress: false
@@ -196,9 +197,8 @@ jobs:
       # Publish the canonical @midnightntwrk scope via changesets. The action runs
       # `changeset publish`, then pushes the release tags and creates one GitHub
       # Release per package from its CHANGELOG.
-      # Phase A: token auth via NODE_AUTH_TOKEN (in the setup-node .npmrc).
-      # Phase B (trusted publishing): remove NODE_AUTH_TOKEN, add
-      #   NPM_CONFIG_PROVENANCE: 'true' (auth then comes from id-token/OIDC).
+      # Auth is npm Trusted Publishing: no token, npm exchanges the job's OIDC
+      # id-token. Provenance via NPM_CONFIG_PROVENANCE.
       - name: Publish @midnightntwrk + GitHub Releases
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
@@ -206,15 +206,7 @@ jobs:
           setupGitUser: false
         env:
           GITHUB_TOKEN: ${{ secrets.MIDNIGHTCI_PACKAGES_WRITE }}
-          NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_NPMJS_TOKEN }}
-
-      # Mirror the transitional @midnight-ntwrk alias (dashed scope). The canonical
-      # scope is already live from the step above; this only stages and publishes
-      # the alias, so it can never lead the canonical scope.
-      - name: Publish @midnight-ntwrk alias
-        run: node scripts/publish-alias.mjs
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_NPMJS_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
 
   # Publishes a snapshot only when there are pending package-bumping changesets
   # (real unreleased changes). Mutually exclusive with publish-stable by
@@ -228,7 +220,7 @@ jobs:
     environment: npm-publish-canary
     permissions:
       contents: read
-      id-token: write # for npm Trusted Publishing (Phase B); harmless while token-based
+      id-token: write # npm Trusted Publishing (OIDC) + provenance
     concurrency:
       group: canary-${{ github.ref_name }}
       cancel-in-progress: false
@@ -252,14 +244,13 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      # Phase A: token auth via NODE_AUTH_TOKEN (in the setup-node .npmrc).
-      # Phase B (trusted publishing): remove NODE_AUTH_TOKEN, add
-      #   NPM_CONFIG_PROVENANCE: 'true'.
+      # Auth is npm Trusted Publishing (OIDC id-token, no token); provenance via
+      # NPM_CONFIG_PROVENANCE.
       # REF_NAME is passed via env (not interpolated into the script) so an
       # attacker-crafted branch name can't inject shell.
       - name: Snapshot version + publish canary
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.MIDNIGHTCI_NPMJS_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
           REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
@@ -291,9 +282,6 @@ jobs:
           # Canonical @midnightntwrk scope. --no-git-tag so canary snapshots leave
           # no git tags (and no GitHub Releases).
           yarn changeset publish --tag "$CANARY_TAG" --no-git-tag
-
-          # Dashed @midnight-ntwrk alias: mirrored afterwards from the workspace.
-          node scripts/publish-alias.mjs --tag "$CANARY_TAG"
 
       - name: Cleanup (always)
         if: always()
