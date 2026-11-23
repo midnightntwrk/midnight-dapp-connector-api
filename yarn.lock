@@ -507,7 +507,7 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^29.0.0"
     "@rollup/plugin-node-resolve": "npm:^16.0.0"
     "@rollup/plugin-typescript": "npm:^12.1.2"
-    "@tsconfig/node24": "npm:^24.0.0"
+    "@tsconfig/node26": "npm:^26.0.0"
     eslint: "npm:^10.0.0"
     eslint-config-prettier: "npm:^10.0.1"
     eslint-plugin-prettier: "npm:^5.2.1"
@@ -855,10 +855,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node24@npm:^24.0.0":
-  version: 24.0.5
-  resolution: "@tsconfig/node24@npm:24.0.5"
-  checksum: 10/d7b57e0a2065d00b219119746e668016a15547fac5a9c3ac766d0913b543b937dc69d6c9fa703ed32ab559a4bb5f87438fea3cdc0eee96f0bf14adff0829cb77
+"@tsconfig/node26@npm:^26.0.0":
+  version: 26.0.2
+  resolution: "@tsconfig/node26@npm:26.0.2"
+  checksum: 10/a4188cba93f33210b01a04a3c57c4fbd97c95ddb9192b4fcfd817806c9f98cbece8b8574bb8e282429dff70cccb1af21511b838b35decf799d9144bb4ed9569e
   languageName: node
   linkType: hard
 
