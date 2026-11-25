@@ -332,6 +332,8 @@ type ConnectedAPI = WalletConnectedAPI & HintUsage;
 
 #### Permissions
 
+A non-normative [reference permission model](./docs/permissions.md) describes one way a wallet can implement these rules.
+
 1. The DApp should not assume presence of methods means granted permission - the DApp can call any method it needs for implementing desired functionality, but the Wallet may reject some (or all) of them according to its permission policy. To let DApp clearly distinguish when permission to use particular API was rejected, wallet must return `PermissionRejected` error for a particular method.
 2. The DApp should not assume any particular permission system and its granularity being implemented. In particular - The DApp should use as little `ConnectedAPI` surface as possible for its functionality and follow the rules of progressive enhancement/graceful degradation when learning that certain methods are rejected. 
 3. The DApp can use `hintUsage` method to hint to wallet what methods are expected be used in a certain context (be it whole session, single view, or a user flow - it is up to DApp). The wallet should expect multiple `hintUsage` calls as they may be related to different parts of a DApp. The wallet can use these calls as an opportunity to ask user for permissions. The wallet must resolve promise with a void value (`undefined`). The returned promise should be resolved only after the wallet finishes processing (including user interaction, if needed).

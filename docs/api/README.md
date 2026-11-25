@@ -8,6 +8,8 @@ This API provides a comprehensive interface for the DApp - Wallet connection, de
 
 The [Specification](_media/SPECIFICATION.md) document describes in more detail expected implementation and usage.
 
+A non-normative [reference permission model](_media/permissions.md) describes one way to implement permissions.
+
 ## Installation
 
 The Midnight DApp connector API is available as an NPM package with the namespace `@midnightntwrk/dapp-connector-api`. It can be installed using any node package manager, such as Yarn. To install the package using Yarn, execute the following command:
