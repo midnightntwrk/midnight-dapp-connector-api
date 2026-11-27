@@ -4,6 +4,8 @@ This API provides a comprehensive interface for the DApp - Wallet connection, de
 
 The [Specification](./SPECIFICATION.md) document describes in more detail expected implementation and usage.
 
+A non-normative [reference permission model](./docs/permissions.md) describes one way to implement permissions.
+
 
 ## Installation
 
